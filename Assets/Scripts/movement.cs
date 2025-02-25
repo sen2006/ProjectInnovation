@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -7,18 +8,24 @@ using UnityEngine;
 public class movement : MonoBehaviour
 {
     private Rigidbody rb;
-    private Collider col;
+    private CapsuleCollider col;
+    private Transform tf;
 
     [SerializeField] private float moveSpeed = 0;
     [SerializeField] private float jumpForce = 0;
     [SerializeField] private float dashForce = 0;
+    [SerializeField] private float slideTime = 0;
+
+    private float slideTimer = 0;
+    private bool isSliding = false;
 
     private List<GameObject> currentGroundCollisions = new List<GameObject>();
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        col = GetComponent<Collider>();
+        col = GetComponent<CapsuleCollider>();
+        tf = GetComponent<Transform>();
     }
 
     private void FixedUpdate()
@@ -41,6 +48,10 @@ public class movement : MonoBehaviour
         {
             Dash();
         }
+        else if (Input.GetKeyDown(KeyCode.LeftControl) || isSliding)
+        {
+            Slide();
+        }
     }
 
     void Jump()
@@ -51,6 +62,28 @@ public class movement : MonoBehaviour
     void Dash()
     {
 
+    }
+
+    void Slide()
+    {
+        if (!isSliding)
+        {
+            slideTimer = slideTime;
+            tf.RotateAround(new Vector3(tf.position.x, tf.position.y - col.height/2 + col.radius, tf.position.z), Vector3.right, -90);
+            isSliding = true;
+        }
+        else if (isSliding)
+        {
+            if (slideTimer > 0)
+            {
+                slideTimer -= Time.deltaTime;
+            }
+            else if (slideTimer <= 0)
+            {
+                tf.RotateAround(new Vector3(tf.position.x, tf.position.y, tf.position.z + col.height / 2 - col.radius), Vector3.right, 90);
+                isSliding = false;
+            }
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
