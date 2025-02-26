@@ -13,6 +13,7 @@ public class movement : MonoBehaviour
     private Transform tf;
 
     [SerializeField] private float moveSpeed = 0;
+    [SerializeField] private float strafeSpeed = 0;
     [SerializeField] private float jumpForce = 0;
     [SerializeField] private float dashForce = 0;
     [SerializeField] private float slideMult = 0;
@@ -32,18 +33,21 @@ public class movement : MonoBehaviour
         colliderHeight = col.height;
     }
 
-    private void FixedUpdate()
-    {
-        rb.velocity = new Vector3 (rb.velocity.x, rb.velocity.y, moveSpeed);
-    }
-
     void Update()
     {
+        MoveForward();
         InputHandler();
+    }
+
+    void MoveForward()
+    {
+        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, moveSpeed);
     }
 
     void InputHandler()
     {
+        Strafe();
+
         if (Input.GetKeyDown(KeyCode.Space) && currentGroundCollisions.Count > 0)
         {
             Jump();
@@ -55,6 +59,11 @@ public class movement : MonoBehaviour
         }
 
         Slide(Input.GetKey(KeyCode.LeftControl));
+    }
+
+    void Strafe()
+    {
+        rb.velocity = new Vector3(Input.GetAxis("Horizontal") * strafeSpeed, rb.velocity.y, rb.velocity.z);
     }
 
     void Jump()
