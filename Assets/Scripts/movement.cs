@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CapsuleCollider))]
 
 public class movement : MonoBehaviour
 {
@@ -14,10 +15,11 @@ public class movement : MonoBehaviour
     [SerializeField] private float moveSpeed = 0;
     [SerializeField] private float jumpForce = 0;
     [SerializeField] private float dashForce = 0;
-    [SerializeField] private float slideTime = 0;
+    [SerializeField] private float slideMult = 0;
 
-    private float slideTimer = 0;
-    private bool isSliding = false;
+    private float colliderHeight;
+
+    //TODO: add serializable controls
 
     private List<GameObject> currentGroundCollisions = new List<GameObject>();
 
@@ -26,6 +28,8 @@ public class movement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
         tf = GetComponent<Transform>();
+
+        colliderHeight = col.height;
     }
 
     private void FixedUpdate()
@@ -44,14 +48,13 @@ public class movement : MonoBehaviour
         {
             Jump();
         }
-        else if (Input.GetKeyDown(KeyCode.LeftShift))
+        
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             Dash();
         }
-        else if (Input.GetKeyDown(KeyCode.LeftControl) || isSliding)
-        {
-            Slide();
-        }
+
+        Slide(Input.GetKey(KeyCode.LeftControl));
     }
 
     void Jump()
@@ -64,25 +67,17 @@ public class movement : MonoBehaviour
 
     }
 
-    void Slide()
+    void Slide(bool shouldSlide)
     {
-        if (!isSliding)
+        if (shouldSlide && currentGroundCollisions.Count > 0)
         {
-            slideTimer = slideTime;
-            tf.RotateAround(new Vector3(tf.position.x, tf.position.y - col.height/2 + col.radius, tf.position.z), Vector3.right, -90);
-            isSliding = true;
+            col.height = colliderHeight * slideMult;
+            col.center = new Vector3(0, -col.height / 2, 0);
         }
-        else if (isSliding)
+        else
         {
-            if (slideTimer > 0)
-            {
-                slideTimer -= Time.deltaTime;
-            }
-            else if (slideTimer <= 0)
-            {
-                tf.RotateAround(new Vector3(tf.position.x, tf.position.y, tf.position.z + col.height / 2 - col.radius), Vector3.right, 90);
-                isSliding = false;
-            }
+            col.height = colliderHeight;
+            col.center = Vector3.zero;
         }
     }
 
