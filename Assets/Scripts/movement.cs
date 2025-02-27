@@ -41,7 +41,7 @@ public class movement : MonoBehaviour
 
     void MoveForward()
     {
-        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, moveSpeed);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, moveSpeed);
     }
 
     void InputHandler()
@@ -63,12 +63,12 @@ public class movement : MonoBehaviour
 
     void Strafe()
     {
-        rb.velocity = new Vector3(Input.GetAxis("Horizontal") * strafeSpeed, rb.velocity.y, rb.velocity.z);
+        rb.linearVelocity = new Vector3(Input.GetAxis("Horizontal") * strafeSpeed, rb.linearVelocity.y, rb.linearVelocity.z);
     }
 
     void Jump()
     {
-        rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
     }
 
     void Dash()
