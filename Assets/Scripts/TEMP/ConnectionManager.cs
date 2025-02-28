@@ -1,4 +1,4 @@
-/*using System;
+using System;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Services.Authentication;
@@ -103,4 +103,4 @@ public class ConnectionManager : MonoBehaviour
             Debug.LogException(e);
         }
     }
-}*/
+}
