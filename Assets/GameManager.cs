@@ -61,11 +61,13 @@ public class GameManager : NetworkBehaviour
 
     public void CreateSession(string sessionName)
     {
+        if (connectionState != ConnectionState.Disconnected) return;
         CreateSessionAsync(sessionName);
     }
 
     public void JoinSession(string sessionName)
     {
+        if (connectionState != ConnectionState.Disconnected) return;
         JoinSessionAsync(sessionName);
     }
 
@@ -76,9 +78,13 @@ public class GameManager : NetworkBehaviour
 
         try
         {
-            if (!AuthenticationService.Instance.IsSignedIn)
-                AuthenticationService.Instance.SwitchProfile(playerType.ToString());
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            try
+            {
+
+                AuthenticationService.Instance.SwitchProfile("player1");
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
+            catch (Exception e) { Debug.LogException(e); }
 
             var options = new SessionOptions()
             {
@@ -104,9 +110,13 @@ public class GameManager : NetworkBehaviour
 
         try
         {
-            if (!AuthenticationService.Instance.IsSignedIn)
-                AuthenticationService.Instance.SwitchProfile(playerType.ToString());
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            try
+            {
+
+                AuthenticationService.Instance.SwitchProfile("player2");
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
+            catch (Exception e){ Debug.LogException(e); }
 
             session = await MultiplayerService.Instance.JoinSessionByIdAsync(sessionName);
 
