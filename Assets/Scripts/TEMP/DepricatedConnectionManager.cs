@@ -8,12 +8,16 @@ using UnityEngine;
 
 public class ConnectionManager : MonoBehaviour
 {
+    
+
+
     private string _profileName;
     private string _sessionName;
-    private int _maxPlayers = 10;
+    private int _maxPlayers = 2;
     private ConnectionState _state = ConnectionState.Disconnected;
     private ISession _session;
     private NetworkManager m_NetworkManager;
+
 
     private enum ConnectionState
     {
@@ -28,6 +32,7 @@ public class ConnectionManager : MonoBehaviour
         m_NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
         m_NetworkManager.OnSessionOwnerPromoted += OnSessionOwnerPromoted;
         await UnityServices.InitializeAsync();
+        //Debug.Log(await MultiplayerService.Instance.QuerySessionsAsync(new QuerySessionsOptions { }));
     }
 
     private void OnSessionOwnerPromoted(ulong sessionOwnerPromoted)
