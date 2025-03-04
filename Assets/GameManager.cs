@@ -32,6 +32,12 @@ public class GameManager : NetworkBehaviour
         await UnityServices.InitializeAsync();
         connectionState = ConnectionState.Disconnected;
         //if (Instance==null) Instance = this;
+
+        playerType=PlayerType.PC;
+        if (SystemInfo.deviceType == DeviceType.Handheld)
+        {
+            playerType = PlayerType.Mobile;
+        }
     }
 
 
@@ -80,7 +86,6 @@ public class GameManager : NetworkBehaviour
         {
             try
             {
-
                 AuthenticationService.Instance.SwitchProfile("player1");
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
             }
@@ -92,7 +97,8 @@ public class GameManager : NetworkBehaviour
                 MaxPlayers = 2
             }.WithDistributedAuthorityNetwork();
 
-            session = await MultiplayerService.Instance.CreateSessionAsync(options);
+            //session = await MultiplayerService.Instance.CreateSessionAsync(options);  
+            session = await MultiplayerService.Instance.CreateOrJoinSessionAsync(sessionName, options);
 
             connectionState = ConnectionState.Connected;
         }

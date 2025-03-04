@@ -14,35 +14,33 @@ public class NetworkManagerUI : MonoBehaviour
 
     private void Awake()
     {
-        sessionNameField.ActivateInputField();
+        //sessionNameField.ActivateInputField();
         sessionNameField.onValueChanged.AddListener(setNewName);
 
         hostButton.onClick.AddListener(() => {
             if (string.IsNullOrEmpty(sessionName)) return;
             gameManager.CreateSession(sessionName);
-            sessionNameField.DeactivateInputField();
         });
         clientButton.onClick.AddListener(() => {
             if (string.IsNullOrEmpty(sessionName)) return;
             gameManager.JoinSession(sessionName);
-            sessionNameField.DeactivateInputField();
         });
     }
 
     private void Update()
     {
+        switch (gameManager.GetLocalPlayerType())
+        {
+            case GameManager.PlayerType.PC:
+                clientButton.gameObject.SetActive(false);
+                break;
+            case GameManager.PlayerType.Mobile:
+                hostButton.gameObject.SetActive(false);
+                break;
+        }
         if (gameObject.activeSelf && gameManager.connectionState == GameManager.ConnectionState.Connected)
         {
             gameObject.SetActive(false);
-            switch (gameManager.GetLocalPlayerType())
-            {
-                case GameManager.PlayerType.PC:
-                    clientButton.gameObject.SetActive(false);
-                    break;
-                case GameManager.PlayerType.Mobile:
-                    hostButton.gameObject.SetActive(false);
-                    break;
-            }
         }
     }
 
