@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -15,17 +16,20 @@ public class movement : MonoBehaviour
     [SerializeField] private float moveSpeed = 0;
     [SerializeField] private float strafeSpeed = 0;
     [SerializeField] private float jumpForce = 0;
-    [SerializeField] private float dashForce = 0;
     [SerializeField] private float slideMult = 0;
+
+    [SerializeField] private LayerMask groundLayer;
+
+    [SerializeField] Transform cameraTransfrom;
 
     private float colliderHeight;
 
     //TODO: add serializable controls
 
-    private List<GameObject> currentGroundCollisions = new List<GameObject>();
-
     void Start()
     {
+        Debug.Assert(cameraTransfrom != null, "cameraTransform is not assigned");
+
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
         tf = GetComponent<Transform>();
@@ -48,14 +52,9 @@ public class movement : MonoBehaviour
     {
         Strafe();
 
-        if (Input.GetKeyDown(KeyCode.Space) && currentGroundCollisions.Count > 0)
+        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
             Jump();
-        }
-        
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            Dash();
         }
 
         Slide(Input.GetKey(KeyCode.LeftControl));
@@ -71,14 +70,9 @@ public class movement : MonoBehaviour
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
     }
 
-    void Dash()
-    {
-
-    }
-
     void Slide(bool shouldSlide)
     {
-        if (shouldSlide && currentGroundCollisions.Count > 0)
+        if (shouldSlide && IsGrounded())
         {
             col.height = colliderHeight * slideMult;
             col.center = new Vector3(0, -col.height / 2, 0);
@@ -88,21 +82,15 @@ public class movement : MonoBehaviour
             col.height = colliderHeight;
             col.center = Vector3.zero;
         }
+
+        cameraTransfrom.localPosition = col.center + new Vector3(0, col.height / 2 - col.radius, 0);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private bool IsGrounded()
     {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            currentGroundCollisions.Add(collision.gameObject);
-        }
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        if (currentGroundCollisions.Contains(collision.gameObject))
-        {
-            currentGroundCollisions.Remove(collision.gameObject);
-        }
+        Vector3 pos = tf.position;
+        return Physics.CapsuleCast(new Vector3(pos.x, pos.y - transform.localScale.y + col.radius, pos.z),
+            new Vector3(pos.x, pos.y + col.height / 2 - col.radius, pos.z), col.radius - Physics.defaultContactOffset,
+            Vector3.down, .1f, groundLayer);
     }
 }
