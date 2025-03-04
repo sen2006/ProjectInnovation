@@ -292,8 +292,8 @@ MonoBehaviour:
   moveSpeed: 5
   strafeSpeed: 5
   jumpForce: 7
-  dashForce: 0
   slideMult: 0.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  cameraTransfrom: {fileID: 4113583914823498141}
