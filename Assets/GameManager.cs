@@ -49,8 +49,8 @@ public class GameManager : NetworkBehaviour
         switch (id)
         {
             default:
-            case 0: playerType = PlayerType.PC; break;
-            case 1: playerType = PlayerType.Mobile; break;
+            case 1: playerType = PlayerType.PC; break;
+            case 2: playerType = PlayerType.Mobile; break;
         }
         Debug.Log("LocalClientType:" + GetLocalPlayerType());
         
