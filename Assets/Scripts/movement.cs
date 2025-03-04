@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -18,11 +19,11 @@ public class movement : MonoBehaviour
     [SerializeField] private float dashForce = 0;
     [SerializeField] private float slideMult = 0;
 
+    [SerializeField] private LayerMask groundLayer;
+
     private float colliderHeight;
 
     //TODO: add serializable controls
-
-    private List<GameObject> currentGroundCollisions = new List<GameObject>();
 
     void Start()
     {
@@ -48,7 +49,7 @@ public class movement : MonoBehaviour
     {
         Strafe();
 
-        if (Input.GetKeyDown(KeyCode.Space) && currentGroundCollisions.Count > 0)
+        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
             Jump();
         }
@@ -78,7 +79,7 @@ public class movement : MonoBehaviour
 
     void Slide(bool shouldSlide)
     {
-        if (shouldSlide && currentGroundCollisions.Count > 0)
+        if (shouldSlide && IsGrounded())
         {
             col.height = colliderHeight * slideMult;
             col.center = new Vector3(0, -col.height / 2, 0);
@@ -90,19 +91,11 @@ public class movement : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private bool IsGrounded()
     {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            currentGroundCollisions.Add(collision.gameObject);
-        }
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        if (currentGroundCollisions.Contains(collision.gameObject))
-        {
-            currentGroundCollisions.Remove(collision.gameObject);
-        }
+        Vector3 pos = tf.position;
+        return Physics.CapsuleCast(new Vector3(pos.x, pos.y - col.height / 2 + col.radius, pos.z),
+            new Vector3(pos.x, pos.y + col.height / 2 - col.radius, pos.z), col.radius - Physics.defaultContactOffset,
+            Vector3.down, .1f, groundLayer);
     }
 }
