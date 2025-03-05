@@ -16,10 +16,11 @@ public class movement : MonoBehaviour
     [SerializeField] private float moveSpeed = 0;
     [SerializeField] private float strafeSpeed = 0;
     [SerializeField] private float jumpForce = 0;
-    [SerializeField] private float dashForce = 0;
     [SerializeField] private float slideMult = 0;
 
     [SerializeField] private LayerMask groundLayer;
+
+    [SerializeField] Transform cameraTransfrom;
 
     private float colliderHeight;
 
@@ -27,6 +28,8 @@ public class movement : MonoBehaviour
 
     void Start()
     {
+        Debug.Assert(cameraTransfrom != null, "cameraTransform is not assigned");
+
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
         tf = GetComponent<Transform>();
@@ -53,11 +56,6 @@ public class movement : MonoBehaviour
         {
             Jump();
         }
-        
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            Dash();
-        }
 
         Slide(Input.GetKey(KeyCode.LeftControl));
     }
@@ -72,11 +70,6 @@ public class movement : MonoBehaviour
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
     }
 
-    void Dash()
-    {
-
-    }
-
     void Slide(bool shouldSlide)
     {
         if (shouldSlide && IsGrounded())
@@ -89,12 +82,14 @@ public class movement : MonoBehaviour
             col.height = colliderHeight;
             col.center = Vector3.zero;
         }
+
+        cameraTransfrom.localPosition = col.center + new Vector3(0, col.height / 2 - col.radius, 0);
     }
 
     private bool IsGrounded()
     {
         Vector3 pos = tf.position;
-        return Physics.CapsuleCast(new Vector3(pos.x, pos.y - col.height / 2 + col.radius, pos.z),
+        return Physics.CapsuleCast(new Vector3(pos.x, pos.y - transform.localScale.y + col.radius, pos.z),
             new Vector3(pos.x, pos.y + col.height / 2 - col.radius, pos.z), col.radius - Physics.defaultContactOffset,
             Vector3.down, .1f, groundLayer);
     }
