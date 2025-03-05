@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.UIElements;
 using UnityEngine;
+using Unity.Services.Core;
+using System.Threading.Tasks;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
@@ -16,9 +14,11 @@ public class movement : MonoBehaviour
     [SerializeField] private float moveSpeed = 0;
     [SerializeField] private float strafeSpeed = 0;
     [SerializeField] private float jumpForce = 0;
+    [SerializeField] private float wallJumpForce = 0;
     [SerializeField] private float slideMult = 0;
 
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask wallLayer;
 
     [SerializeField] Transform cameraTransfrom;
 
@@ -26,8 +26,9 @@ public class movement : MonoBehaviour
 
     //TODO: add serializable controls
 
-    void Start()
+    async void Start()
     {
+        await UnityServices.InitializeAsync();
         Debug.Assert(cameraTransfrom != null, "cameraTransform is not assigned");
 
         rb = GetComponent<Rigidbody>();
@@ -41,6 +42,8 @@ public class movement : MonoBehaviour
     {
         MoveForward();
         InputHandler();
+        WallRide();
+        Debug.Log(rb.linearVelocity.z);
     }
 
     void MoveForward()
@@ -58,6 +61,18 @@ public class movement : MonoBehaviour
         }
 
         Slide(Input.GetKey(KeyCode.LeftControl));
+    }
+
+    void WallRide()
+    {
+        if ((IsOnWallLeft() && Input.GetKey(KeyCode.A)) || (IsOnWallRight() && Input.GetKey(KeyCode.D)))
+        {
+            rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
+        }
+        else
+        {
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+        }
     }
 
     void Strafe()
@@ -99,7 +114,7 @@ public class movement : MonoBehaviour
         Vector3 pos = tf.position;
         return Physics.CapsuleCast(new Vector3(pos.x, pos.y - transform.localScale.y + col.radius, pos.z),
             new Vector3(pos.x, pos.y + col.height / 2 - col.radius, pos.z), col.radius - Physics.defaultContactOffset,
-            Vector3.left, .1f, groundLayer);
+            Vector3.left, .1f, wallLayer);
     }
 
     private bool IsOnWallRight()
@@ -107,6 +122,13 @@ public class movement : MonoBehaviour
         Vector3 pos = tf.position;
         return Physics.CapsuleCast(new Vector3(pos.x, pos.y - transform.localScale.y + col.radius, pos.z),
             new Vector3(pos.x, pos.y + col.height / 2 - col.radius, pos.z), col.radius - Physics.defaultContactOffset,
-            Vector3.right, .1f, groundLayer);
+            Vector3.right, .1f, wallLayer);
+    }
+
+    private async void lockStrafe(int ms)
+    {
+        //lock code
+        await Task.Delay(ms);
+        //unlock
     }
 }

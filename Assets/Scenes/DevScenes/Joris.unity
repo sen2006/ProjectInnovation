@@ -361,7 +361,7 @@ GameObject:
   - component: {fileID: 1451722227}
   - component: {fileID: 1451722226}
   - component: {fileID: 1451722225}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -505,6 +505,10 @@ PrefabInstance:
     - target: {fileID: 398344970839597382, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7565398617127204080, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+      propertyPath: m_Constraints
+      value: 112
       objectReference: {fileID: 0}
     - target: {fileID: 9191532357592237585, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
       propertyPath: m_Name

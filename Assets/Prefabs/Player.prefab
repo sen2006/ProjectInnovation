@@ -296,4 +296,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 64
   cameraTransfrom: {fileID: 4113583914823498141}
