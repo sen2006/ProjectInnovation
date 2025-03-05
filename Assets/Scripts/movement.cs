@@ -93,4 +93,20 @@ public class movement : MonoBehaviour
             new Vector3(pos.x, pos.y + col.height / 2 - col.radius, pos.z), col.radius - Physics.defaultContactOffset,
             Vector3.down, .1f, groundLayer);
     }
+
+    private bool IsOnWallLeft()
+    {
+        Vector3 pos = tf.position;
+        return Physics.CapsuleCast(new Vector3(pos.x, pos.y - transform.localScale.y + col.radius, pos.z),
+            new Vector3(pos.x, pos.y + col.height / 2 - col.radius, pos.z), col.radius - Physics.defaultContactOffset,
+            Vector3.left, .1f, groundLayer);
+    }
+
+    private bool IsOnWallRight()
+    {
+        Vector3 pos = tf.position;
+        return Physics.CapsuleCast(new Vector3(pos.x, pos.y - transform.localScale.y + col.radius, pos.z),
+            new Vector3(pos.x, pos.y + col.height / 2 - col.radius, pos.z), col.radius - Physics.defaultContactOffset,
+            Vector3.right, .1f, groundLayer);
+    }
 }
