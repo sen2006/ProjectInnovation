@@ -68,13 +68,15 @@ public class GameManager : NetworkBehaviour
     public void CreateSession(string sessionName)
     {
         if (connectionState != ConnectionState.Disconnected) return;
-        _=CreateSessionAsync(sessionName);
+        //_=CreateSessionAsync(sessionName);
+        _=CreateOrJoinSessionAsync("player1", sessionName);
     }
 
     public void JoinSession(string sessionName)
     {
         if (connectionState != ConnectionState.Disconnected) return;
-        _=JoinSessionAsync(sessionName);
+        //_=JoinSessionAsync(sessionName);
+        _=CreateOrJoinSessionAsync("player2", sessionName);
     }
 
     private async Task CreateSessionAsync(string sessionName)
@@ -94,9 +96,7 @@ public class GameManager : NetworkBehaviour
             var options = new SessionOptions()
             {
                 Name = sessionName,
-                MaxPlayers = 2,
-                IsPrivate = false,
-                IsLocked = false
+                MaxPlayers = 2
             }.WithDistributedAuthorityNetwork();
 
             //session = await MultiplayerService.Instance.CreateSessionAsync(options);  
@@ -118,13 +118,13 @@ public class GameManager : NetworkBehaviour
 
         try
         {
-            try
-            {
+            //try
+            //{
 
                 AuthenticationService.Instance.SwitchProfile("player2");
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
-            }
-            catch (Exception e){ Debug.LogException(e); }
+            //}
+            //catch (Exception e){ Debug.LogException(e); }
 
             /*var options = new QuerySessionsOptions()
             {
@@ -134,6 +134,32 @@ public class GameManager : NetworkBehaviour
             //QuerySessionsResults result = await MultiplayerService.Instance.QuerySessionsAsync(options);
             //Debug.Log(result.Sessions);
             session = await MultiplayerService.Instance.JoinSessionByIdAsync(sessionName);
+
+            connectionState = ConnectionState.Connected;
+        }
+        catch (Exception e)
+        {
+            connectionState = ConnectionState.Disconnected;
+            Debug.LogException(e);
+        }
+    }
+
+    private async Task CreateOrJoinSessionAsync(string profileName, string sessionName)
+    {
+        connectionState = ConnectionState.Connecting;
+
+        try
+        {
+            AuthenticationService.Instance.SwitchProfile(profileName);
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+
+            var options = new SessionOptions()
+            {
+                Name = sessionName,
+                MaxPlayers = 2
+            }.WithDistributedAuthorityNetwork();
+
+            session = await MultiplayerService.Instance.CreateOrJoinSessionAsync(sessionName, options);
 
             connectionState = ConnectionState.Connected;
         }
