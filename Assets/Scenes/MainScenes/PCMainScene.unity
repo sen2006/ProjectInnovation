@@ -316,6 +316,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2335124039339739896, guid: 7ead65a890faa0449b0918308e018de6, type: 3}
+      propertyPath: ConnectionData.ServerListenAddress
+      value: 0.0.0.0
+      objectReference: {fileID: 0}
     - target: {fileID: 4738863327577447825, guid: 7ead65a890faa0449b0918308e018de6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

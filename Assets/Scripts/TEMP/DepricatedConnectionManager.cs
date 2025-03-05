@@ -6,7 +6,7 @@ using Unity.Services.Core;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 
-/*public class ConnectionManager : MonoBehaviour
+public class ConnectionManager : MonoBehaviour
 {
     
 
@@ -16,7 +16,7 @@ using UnityEngine;
     private int _maxPlayers = 2;
     private ConnectionState _state = ConnectionState.Disconnected;
     private ISession _session;
-    private NetworkManager m_NetworkManager;
+    [SerializeField] private NetworkManager m_NetworkManager;
 
 
     private enum ConnectionState
@@ -28,7 +28,6 @@ using UnityEngine;
 
     private async void Awake()
     {
-        m_NetworkManager = GetComponent<NetworkManager>();
         m_NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
         m_NetworkManager.OnSessionOwnerPromoted += OnSessionOwnerPromoted;
         await UnityServices.InitializeAsync();
@@ -108,4 +107,4 @@ using UnityEngine;
             Debug.LogException(e);
         }
     }
-}*/
+}

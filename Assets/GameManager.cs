@@ -26,6 +26,7 @@ public class GameManager : NetworkBehaviour
     public PlayerType playerType { get; private set; }
     public ConnectionState connectionState { get; private set; }
     private ISession session;
+    [SerializeField] NetworkManager networkManager;
 
     public async void Awake()
     {
@@ -33,10 +34,10 @@ public class GameManager : NetworkBehaviour
         connectionState = ConnectionState.Disconnected;
         //if (Instance==null) Instance = this;
 
-        playerType=PlayerType.PC;
+        //playerType=PlayerType.PC;
         if (SystemInfo.deviceType == DeviceType.Handheld)
         {
-            playerType = PlayerType.Mobile;
+            //playerType = PlayerType.Mobile;
         }
     }
 
@@ -44,16 +45,15 @@ public class GameManager : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        var id = NetworkManager.Singleton.LocalClientId;
+        var id = networkManager.LocalClientId;
         Debug.Log("LocalClientID:" + id);
         switch (id)
         {
-            default:
             case 1: playerType = PlayerType.PC; break;
             case 2: playerType = PlayerType.Mobile; break;
         }
         Debug.Log("LocalClientType:" + GetLocalPlayerType());
-        
+
     }
 
     public PlayerType GetLocalPlayerType() { return playerType; }
@@ -94,7 +94,9 @@ public class GameManager : NetworkBehaviour
             var options = new SessionOptions()
             {
                 Name = sessionName,
-                MaxPlayers = 2
+                MaxPlayers = 2,
+                IsPrivate = false,
+                IsLocked = false
             }.WithDistributedAuthorityNetwork();
 
             //session = await MultiplayerService.Instance.CreateSessionAsync(options);  
@@ -124,6 +126,13 @@ public class GameManager : NetworkBehaviour
             }
             catch (Exception e){ Debug.LogException(e); }
 
+            /*var options = new QuerySessionsOptions()
+            {
+
+            };*/
+
+            //QuerySessionsResults result = await MultiplayerService.Instance.QuerySessionsAsync(options);
+            //Debug.Log(result.Sessions);
             session = await MultiplayerService.Instance.JoinSessionByIdAsync(sessionName);
 
             connectionState = ConnectionState.Connected;
