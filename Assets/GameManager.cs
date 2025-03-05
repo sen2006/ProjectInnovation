@@ -33,11 +33,11 @@ public class GameManager : NetworkBehaviour
         connectionState = ConnectionState.Disconnected;
         //if (Instance==null) Instance = this;
 
-        /*playerType=PlayerType.PC;
+        playerType=PlayerType.PC;
         if (SystemInfo.deviceType == DeviceType.Handheld)
         {
             playerType = PlayerType.Mobile;
-        }*/
+        }
     }
 
 
@@ -68,13 +68,13 @@ public class GameManager : NetworkBehaviour
     public void CreateSession(string sessionName)
     {
         if (connectionState != ConnectionState.Disconnected) return;
-        CreateSessionAsync(sessionName);
+        _=CreateSessionAsync(sessionName);
     }
 
     public void JoinSession(string sessionName)
     {
         if (connectionState != ConnectionState.Disconnected) return;
-        JoinSessionAsync(sessionName);
+        _=JoinSessionAsync(sessionName);
     }
 
     private async Task CreateSessionAsync(string sessionName)

@@ -11,7 +11,6 @@ public class NetworkManagerUI : MonoBehaviour
     [SerializeField] private Button clientButton;
     [SerializeField] private TMP_InputField sessionNameField;
     [SerializeField] private string sessionName;
-    [SerializeField] private Collider col;
 
     private void Awake()
     {

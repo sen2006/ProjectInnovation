@@ -6,7 +6,7 @@ using Unity.Services.Core;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 
-public class ConnectionManager : MonoBehaviour
+/*public class ConnectionManager : MonoBehaviour
 {
     
 
@@ -108,4 +108,4 @@ public class ConnectionManager : MonoBehaviour
             Debug.LogException(e);
         }
     }
-}
+}*/
