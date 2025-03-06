@@ -6,10 +6,16 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Scenes/MultiplayerTest.unity
+    path: Assets/Scenes/DevScenes/MultiplayerTest.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Scenes/MultiplayerTest2.unity
+    path: Assets/Scenes/DevScenes/MultiplayerTest2.unity
     guid: 11ec38aa9d48d4349ab44b376a74aa0d
+  - enabled: 1
+    path: Assets/Scenes/MainScenes/PCMainScene.unity
+    guid: 5650b66065f723b45b49dfd375bbe702
+  - enabled: 1
+    path: Assets/Scenes/MainScenes/MobileMainScene.unity
+    guid: 858851183cff8d64398a1647f0ccab20
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

@@ -16,7 +16,7 @@ public class ConnectionManager : MonoBehaviour
     private int _maxPlayers = 2;
     private ConnectionState _state = ConnectionState.Disconnected;
     private ISession _session;
-    private NetworkManager m_NetworkManager;
+    [SerializeField] private NetworkManager m_NetworkManager;
 
 
     private enum ConnectionState
@@ -28,7 +28,6 @@ public class ConnectionManager : MonoBehaviour
 
     private async void Awake()
     {
-        m_NetworkManager = GetComponent<NetworkManager>();
         m_NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
         m_NetworkManager.OnSessionOwnerPromoted += OnSessionOwnerPromoted;
         await UnityServices.InitializeAsync();
