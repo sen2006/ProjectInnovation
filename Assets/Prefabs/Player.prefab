@@ -291,7 +291,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   strafeSpeed: 5
+  strafeAirControl: 5
   jumpForce: 7
+  wallJumpForce: 5
+  wallJumpControlGracePeriodMS: 300
   slideMult: 0.5
   groundLayer:
     serializedVersion: 2

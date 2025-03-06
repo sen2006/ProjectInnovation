@@ -13,8 +13,10 @@ public class movement : MonoBehaviour
 
     [SerializeField] private float moveSpeed = 0;
     [SerializeField] private float strafeSpeed = 0;
+    [SerializeField] private float strafeAirControl = 0;
     [SerializeField] private float jumpForce = 0;
     [SerializeField] private float wallJumpForce = 0;
+    [SerializeField] private int   wallJumpControlGracePeriodMS = 0;
     [SerializeField] private float slideMult = 0;
 
     [SerializeField] private LayerMask groundLayer;
@@ -23,6 +25,8 @@ public class movement : MonoBehaviour
     [SerializeField] Transform cameraTransfrom;
 
     private float colliderHeight;
+
+    private bool controlLocked = false;
 
     //TODO: add serializable controls
 
@@ -55,7 +59,7 @@ public class movement : MonoBehaviour
     {
         Strafe();
 
-        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
         }
@@ -65,7 +69,7 @@ public class movement : MonoBehaviour
 
     void WallRide()
     {
-        if ((IsOnWallLeft() && Input.GetKey(KeyCode.A)) || (IsOnWallRight() && Input.GetKey(KeyCode.D)))
+        if (((IsOnWallLeft() && Input.GetKey(KeyCode.A)) || (IsOnWallRight() && Input.GetKey(KeyCode.D))) && !controlLocked)
         {
             rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
         }
@@ -77,12 +81,39 @@ public class movement : MonoBehaviour
 
     void Strafe()
     {
-        rb.linearVelocity = new Vector3(Input.GetAxis("Horizontal") * strafeSpeed, rb.linearVelocity.y, rb.linearVelocity.z);
+        if (controlLocked) return;
+
+        if (IsGrounded())
+        {
+            rb.linearVelocity = new Vector3(Input.GetAxis("Horizontal") * strafeSpeed, rb.linearVelocity.y, rb.linearVelocity.z);
+        }
+        else
+        {
+            rb.AddForce(new Vector3(Input.GetAxis("Horizontal") * strafeAirControl, 0, 0));
+            rb.linearVelocity = new Vector3(Mathf.Clamp(rb.linearVelocity.x, -strafeSpeed, strafeSpeed), rb.linearVelocity.y, rb.linearVelocity.z);
+        }
     }
+        
 
     void Jump()
     {
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
+        if (IsGrounded())
+        {
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
+        }
+        else if (IsOnWallLeft())
+        {
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+            rb.linearVelocity = new Vector3(wallJumpForce, jumpForce, rb.linearVelocity.z);
+            LockStrafe(wallJumpControlGracePeriodMS);
+        }
+        else if (IsOnWallRight())
+        {
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+            rb.linearVelocity = new Vector3(-wallJumpForce, jumpForce, rb.linearVelocity.z);
+            LockStrafe(wallJumpControlGracePeriodMS);
+        }
+        
     }
 
     void Slide(bool shouldSlide)
@@ -125,10 +156,12 @@ public class movement : MonoBehaviour
             Vector3.right, .1f, wallLayer);
     }
 
-    private async void lockStrafe(int ms)
+    private async void LockStrafe(int ms)
     {
-        //lock code
+        if(controlLocked) return;
+
+        controlLocked = true;
         await Task.Delay(ms);
-        //unlock
+        controlLocked = false;
     }
 }
