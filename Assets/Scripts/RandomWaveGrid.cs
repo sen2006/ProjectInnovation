@@ -43,7 +43,7 @@ public class RandomWaveGrid : MonoBehaviour
         {
             for (int z = 0; z < height; z++)
             {
-                Vector3 position = transform.position + new Vector3(x * spacing, 0, z * spacing);
+                Vector3 position = transform.position + new Vector3(x * spacing, -0, z * spacing);
                 GameObject obj = Instantiate(prefab, position, Quaternion.identity, transform);
                 grid[x, z] = obj.transform;
 
@@ -71,8 +71,12 @@ public class RandomWaveGrid : MonoBehaviour
     void AddFloorCollider()
     {
         BoxCollider box = gameObject.AddComponent<BoxCollider>(); // Attach to this object
-        box.center = new Vector3((width - 1) * spacing / 2, -0.1f, (height - 1) * spacing / 2);
-        box.size = new Vector3(width * spacing, 1f, height * spacing); // Set correct size
+
+        float cubeHeight = 8f; // Since cubes are scaled to 8 in Y
+        float topY = cubeHeight / 2 - 0.5f; // Moves the collider to match the top of cubes
+
+        box.center = new Vector3((width - 1) * spacing / 2, topY, (height - 1) * spacing / 2);
+        box.size = new Vector3(width * spacing, 1f, height * spacing); // Keep it 1 unit thick
     }
 
     void ApplyWaveEffect()
