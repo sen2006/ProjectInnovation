@@ -5,21 +5,15 @@ using System.Collections.Generic;
 public class RandomWaveGrid : MonoBehaviour
 {
     public GameObject prefab;
-    public int width = 30;
-    public int height = 30;
-    public float spacing = 1.5f;
-    public float waveSpeed = 2.0f;
-    public float waveAmplitude = 1.5f;
-    public float shockwaveSpeed = 8.0f;
-    public float shockwaveMaxRadius = 10.0f;
-    public float heightMultiplier = 3.0f; // How tall the cubes get in the shockwave
+    public int width = 30, height = 30;
+    public float spacing = 1.5f, waveSpeed = 2.0f, waveAmplitude = 1.5f;
+    public float shockwaveSpeed = 8.0f, shockwaveMaxRadius = 10.0f, heightMultiplier = 3.0f;
     public float shockwaveDuration = 0.5f;
-    public Gradient colorGradient;
-    public Gradient shockwaveGradient;
+    public Gradient colorGradient, shockwaveGradient;
 
     private Transform[,] grid;
     private float[,] waveOffsets;
-    private Dictionary<Transform, float> originalHeights = new Dictionary<Transform, float>();
+    private Dictionary<Transform, Vector3> originalScales = new Dictionary<Transform, Vector3>();
     private List<Shockwave> activeShockwaves = new List<Shockwave>();
 
     void Start()
@@ -31,7 +25,7 @@ public class RandomWaveGrid : MonoBehaviour
     {
         ApplyWaveEffect();
         UpdateShockwaves();
-        CheckMagnetInput();
+        if (Input.GetMouseButtonDown(0)) DetectShockwaveOrigin();
     }
 
     void CreateGrid()
@@ -39,44 +33,34 @@ public class RandomWaveGrid : MonoBehaviour
         grid = new Transform[width, height];
         waveOffsets = new float[width, height];
 
+        Vector3 basePosition = transform.position;
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < height; z++)
             {
-                Vector3 position = transform.position + new Vector3(x * spacing, -0, z * spacing);
+                Vector3 position = basePosition + new Vector3(x * spacing, 0, z * spacing);
                 GameObject obj = Instantiate(prefab, position, Quaternion.identity, transform);
-                grid[x, z] = obj.transform;
-
-                waveOffsets[x, z] = Random.Range(0.0f, Mathf.PI * 2);
+                Transform objTransform = obj.transform;
+                grid[x, z] = objTransform;
+                waveOffsets[x, z] = Random.Range(0f, Mathf.PI * 2);
 
                 Renderer rend = obj.GetComponent<Renderer>();
-                if (rend != null)
-                {
-                    rend.material = new Material(rend.material);
-                }
+                if (rend != null) rend.material = new Material(rend.material);
 
-                // Remove BoxCollider from cubes (if they have one)
-                if (obj.GetComponent<BoxCollider>() != null)
-                {
-                    Destroy(obj.GetComponent<BoxCollider>());
-                }
+                // Remove BoxCollider if present
+                Destroy(obj.GetComponent<BoxCollider>());
 
-                originalHeights[obj.transform] = obj.transform.localScale.y;
+                originalScales[objTransform] = objTransform.localScale;
             }
         }
-
         AddFloorCollider();
     }
 
     void AddFloorCollider()
     {
-        BoxCollider box = gameObject.AddComponent<BoxCollider>(); // Attach to this object
-
-        float cubeHeight = 8f; // Since cubes are scaled to 8 in Y
-        float topY = cubeHeight / 2 - 0.5f; // Moves the collider to match the top of cubes
-
-        box.center = new Vector3((width - 1) * spacing / 2, topY, (height - 1) * spacing / 2);
-        box.size = new Vector3(width * spacing, 1f, height * spacing); // Keep it 1 unit thick
+        BoxCollider box = gameObject.AddComponent<BoxCollider>();
+        box.center = new Vector3((width - 1) * spacing / 2, 4f-0.5f, (height - 1) * spacing / 2);
+        box.size = new Vector3(width * spacing, 1f, height * spacing);
     }
 
     void ApplyWaveEffect()
@@ -91,35 +75,18 @@ public class RandomWaveGrid : MonoBehaviour
                 obj.position = new Vector3(obj.position.x, waveHeight, obj.position.z);
 
                 float normalizedHeight = Mathf.InverseLerp(-waveAmplitude, waveAmplitude, waveHeight);
-                ApplyColor(obj, normalizedHeight);
+                obj.GetComponent<Renderer>().material.color = colorGradient.Evaluate(normalizedHeight);
             }
         }
     }
 
-    void ApplyColor(Transform obj, float normalizedHeight)
+    void DetectShockwaveOrigin()
     {
-        Renderer rend = obj.GetComponent<Renderer>();
-        if (rend != null)
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            rend.material.color = colorGradient.Evaluate(normalizedHeight);
+            activeShockwaves.Add(new Shockwave(hit.point, Time.time));
         }
-    }
-
-    void CheckMagnetInput()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                StartShockwave(hit.point);
-            }
-        }
-    }
-
-    void StartShockwave(Vector3 position)
-    {
-        activeShockwaves.Add(new Shockwave(position, Time.time));
     }
 
     void UpdateShockwaves()
@@ -129,9 +96,9 @@ public class RandomWaveGrid : MonoBehaviour
         {
             Shockwave wave = activeShockwaves[i];
             float elapsedTime = currentTime - wave.startTime;
-            float radius = elapsedTime * shockwaveSpeed;
+            float radiusSqr = (elapsedTime * shockwaveSpeed) * (elapsedTime * shockwaveSpeed);
 
-            if (radius > shockwaveMaxRadius)
+            if (radiusSqr > shockwaveMaxRadius * shockwaveMaxRadius)
             {
                 activeShockwaves.RemoveAt(i);
                 continue;
@@ -139,10 +106,10 @@ public class RandomWaveGrid : MonoBehaviour
 
             foreach (Transform obj in grid)
             {
-                float distance = Vector3.Distance(obj.position, wave.origin);
-                if (distance < radius && distance > radius - 1.5f) // Affect objects inside wave boundary
+                float distanceSqr = (obj.position - wave.origin).sqrMagnitude;
+                if (distanceSqr < radiusSqr && distanceSqr > (radiusSqr - 2.25f)) // Using squared values
                 {
-                    StartCoroutine(ShockwaveEffect(obj, distance / shockwaveMaxRadius));
+                    StartCoroutine(ShockwaveEffect(obj, Mathf.Sqrt(distanceSqr) / shockwaveMaxRadius));
                 }
             }
         }
@@ -150,35 +117,32 @@ public class RandomWaveGrid : MonoBehaviour
 
     IEnumerator ShockwaveEffect(Transform obj, float normalizedDistance)
     {
-        float originalHeight = originalHeights[obj]; // Restore correct height
-        Vector3 originalScale = obj.localScale;
+        Vector3 originalScale = originalScales[obj];
         Renderer rend = obj.GetComponent<Renderer>();
         Color originalColor = rend.material.color;
-        Color waveColor = shockwaveGradient.Evaluate(normalizedDistance); // Rainbow effect
-
+        Color waveColor = shockwaveGradient.Evaluate(normalizedDistance);
+        float halfDuration = shockwaveDuration / 2;
         float startTime = Time.time;
+        float targetHeight = originalScale.y * heightMultiplier;
 
-        while (Time.time - startTime < shockwaveDuration / 2)
+        while (Time.time - startTime < halfDuration)
         {
-            float t = (Time.time - startTime) / (shockwaveDuration / 2);
-            float newHeight = Mathf.Lerp(originalHeight, originalHeight * heightMultiplier, t);
-            obj.localScale = new Vector3(originalScale.x, newHeight, originalScale.z);
+            float t = (Time.time - startTime) / halfDuration;
+            obj.localScale = new Vector3(originalScale.x, Mathf.Lerp(originalScale.y, targetHeight, t), originalScale.z);
             rend.material.color = Color.Lerp(originalColor, waveColor, t);
             yield return null;
         }
 
         startTime = Time.time;
-
-        while (Time.time - startTime < shockwaveDuration / 2)
+        while (Time.time - startTime < halfDuration)
         {
-            float t = (Time.time - startTime) / (shockwaveDuration / 2);
-            float newHeight = Mathf.Lerp(originalHeight * heightMultiplier, originalHeight, t);
-            obj.localScale = new Vector3(originalScale.x, newHeight, originalScale.z);
+            float t = (Time.time - startTime) / halfDuration;
+            obj.localScale = new Vector3(originalScale.x, Mathf.Lerp(targetHeight, originalScale.y, t), originalScale.z);
             rend.material.color = Color.Lerp(waveColor, originalColor, t);
             yield return null;
         }
 
-        obj.localScale = new Vector3(originalScale.x, originalHeight, originalScale.z); // Ensure reset
+        obj.localScale = originalScale;
         rend.material.color = originalColor;
     }
 
@@ -186,12 +150,7 @@ public class RandomWaveGrid : MonoBehaviour
     {
         public Vector3 origin;
         public float startTime;
-
-        public Shockwave(Vector3 origin, float startTime)
-        {
-            this.origin = origin;
-            this.startTime = startTime;
-        }
+        public Shockwave(Vector3 origin, float startTime) { this.origin = origin; this.startTime = startTime; }
     }
 }
 
