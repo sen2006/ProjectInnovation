@@ -52,8 +52,7 @@ public class GameManager : NetworkBehaviour
     public void OnJoin(ulong clientId)
     {
         base.OnNetworkSpawn();
-        //var id = networkManager.LocalClientId;
-        var id = clientId;
+        var id = networkManager.LocalClientId;
         Debug.Log("LocalClientID:" + id);
         switch (id)
         {
