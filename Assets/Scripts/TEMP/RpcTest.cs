@@ -5,8 +5,9 @@ public class RpcTest : NetworkBehaviour
 {
     public override void OnNetworkSpawn()
     {
-        if (!IsServer && IsOwner) //Only send an RPC to the server from the client that owns the NetworkObject of this NetworkBehaviour instance
+        if (IsServer && IsOwner) //Only send an RPC to the server from the client that owns the NetworkObject of this NetworkBehaviour instance
         {
+            ClientAndHostRpc(0, NetworkObjectId);
             ServerOnlyRpc(0, NetworkObjectId);
         }
     }
@@ -14,17 +15,13 @@ public class RpcTest : NetworkBehaviour
     [Rpc(SendTo.ClientsAndHost)]
     void ClientAndHostRpc(int value, ulong sourceNetworkObjectId)
     {
-        Debug.Log($"Client Received the RPC #{value} on NetworkObject #{sourceNetworkObjectId}");
-        if (IsOwner) //Only send an RPC to the owner of the NetworkObject
-        {
-            ServerOnlyRpc(value + 1, sourceNetworkObjectId);
-        }
+        if (IsHost) Debug.Log("this is a host");
+        Debug.Log("this is a client");
     }
 
     [Rpc(SendTo.Server)]
     void ServerOnlyRpc(int value, ulong sourceNetworkObjectId)
     {
-        Debug.Log($"Server Received the RPC #{value} on NetworkObject #{sourceNetworkObjectId}");
-        ClientAndHostRpc(value, sourceNetworkObjectId);
+        Debug.Log("this is a server");
     }
 }
