@@ -15,7 +15,7 @@ public class NetworkManagerUI : MonoBehaviour
     private void Awake()
     {
         //sessionNameField.ActivateInputField();
-        sessionNameField.onValueChanged.AddListener(setNewName);
+        sessionNameField.onValueChanged.AddListener(SetNewName);
 
         hostButton.onClick.AddListener(() => {
             if (string.IsNullOrEmpty(sessionName)) return;
@@ -44,7 +44,7 @@ public class NetworkManagerUI : MonoBehaviour
         }
     }
 
-    private void setNewName(string name)
+    private void SetNewName(string name)
     {
         sessionName = name;
     }
