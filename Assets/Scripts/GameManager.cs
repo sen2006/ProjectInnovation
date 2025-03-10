@@ -28,6 +28,11 @@ public class GameManager : NetworkBehaviour
     private ISession session;
     [SerializeField] NetworkManager networkManager;
 
+
+    [SerializeField] RpcTest rpcTest;
+
+
+
     public async void Awake()
     {
         await UnityServices.InitializeAsync();
@@ -39,13 +44,16 @@ public class GameManager : NetworkBehaviour
         {
             //playerType = PlayerType.Mobile;
         }
+
+        networkManager.OnClientConnectedCallback += OnJoin;
     }
 
 
-    public override void OnNetworkSpawn()
+    public void OnJoin(ulong clientId)
     {
         base.OnNetworkSpawn();
-        var id = networkManager.LocalClientId;
+        //var id = networkManager.LocalClientId;
+        var id = clientId;
         Debug.Log("LocalClientID:" + id);
         switch (id)
         {
@@ -54,6 +62,7 @@ public class GameManager : NetworkBehaviour
         }
         Debug.Log("LocalClientType:" + GetLocalPlayerType());
 
+        rpcTest.sendRpcs();
     }
 
     public PlayerType GetLocalPlayerType() { return playerType; }

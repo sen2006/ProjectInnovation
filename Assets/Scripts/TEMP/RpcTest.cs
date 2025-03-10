@@ -3,10 +3,16 @@ using UnityEngine;
 
 public class RpcTest : NetworkBehaviour
 {
+
+    public void sendRpcs()
+    {
+        ClientAndHostRpc(0, NetworkObjectId);
+        ServerOnlyRpc(0, NetworkObjectId);
+    }
     public override void OnNetworkSpawn()
     {
-            ClientAndHostRpc(0, NetworkObjectId);
-            ServerOnlyRpc(0, NetworkObjectId);
+        //ClientAndHostRpc(0, NetworkObjectId);
+        //ServerOnlyRpc(0, NetworkObjectId);
     }
 
     [Rpc(SendTo.ClientsAndHost)]
