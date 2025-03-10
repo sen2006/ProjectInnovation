@@ -150,8 +150,15 @@ public class GameManager : NetworkBehaviour
 
         try
         {
-            AuthenticationService.Instance.SwitchProfile(profileName);
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            try
+            {
+                AuthenticationService.Instance.SwitchProfile(profileName);
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
 
             var options = new SessionOptions()
             {
