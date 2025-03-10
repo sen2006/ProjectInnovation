@@ -1,9 +1,9 @@
+using NUnit.Framework;
 using Unity.Netcode;
 using UnityEngine;
 
 public class RpcTest : NetworkBehaviour
 {
-
     public void sendRpcs()
     {
         ClientAndHostRpc(0, NetworkObjectId);

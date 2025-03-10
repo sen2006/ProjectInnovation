@@ -151,6 +151,7 @@ GameObject:
   - component: {fileID: 2595857410835018737}
   - component: {fileID: 7565398617127204080}
   - component: {fileID: 1170294418798492703}
+  - component: {fileID: 5324179419526296854}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -289,17 +290,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04bd650daf2528f4c8189e29d096f1d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  strafeSpeed: 5
-  strafeAirControl: 5
-  jumpForce: 7
-  wallJumpForce: 5
-  wallJumpControlGracePeriodMS: 300
+  moveSpeed: 10
+  strafeSpeed: 8
+  strafeAirControl: 6
+  jumpForce: 14
   slideMult: 0.5
+  gravityForce: 28
+  coyoteTime: 0.2
+  jumpBufferTime: 0.5
+  wallRunGravity: 0.3
+  wallRunSpeed: 10
+  jumpOffForce: 25
+  wallDetectionRange: 0.8
+  wallRunCooldown: 0.5
+  jumpPushForce: 100
+  cameraTiltAmount: 20
+  cameraTiltSpeed: 5
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
   wallLayer:
     serializedVersion: 2
     m_Bits: 64
-  cameraTransfrom: {fileID: 4113583914823498141}
+  cameraTransform: {fileID: 4113583914823498141}
+--- !u!114 &5324179419526296854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9191532357592237585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 503f5f8e11e289d4e952d5bc430de1b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  phaseDuration: 2
+  cooldownDuration: 5
+  phaseableWallTag: PhaseableWall
