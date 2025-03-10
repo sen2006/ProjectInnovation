@@ -123,12 +123,10 @@ public class Movement : MonoBehaviour
 
     void ApplyGravity()
     {
-        Debug.Log($"Before Gravity: {rb.linearVelocity}"); // Check if velocity is reset
         if (!isGrounded)
         {
             rb.linearVelocity += Vector3.down * gravityForce * Time.deltaTime;
         }
-        Debug.Log($"After Gravity: {rb.linearVelocity}");
     }
 
 
