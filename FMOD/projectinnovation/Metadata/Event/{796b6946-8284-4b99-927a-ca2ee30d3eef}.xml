@@ -2,13 +2,13 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="Event" id="{796b6946-8284-4b99-927a-ca2ee30d3eef}">
 		<property name="name">
-			<value>Level1</value>
+			<value>Level1Music</value>
 		</property>
 		<property name="outputFormat">
 			<value>1</value>
 		</property>
 		<relationship name="folder">
-			<destination>{f485c7cf-2e99-477d-8e49-a7ff9d52c3b7}</destination>
+			<destination>{6221b194-4486-44fe-bd2c-9525d41f8567}</destination>
 		</relationship>
 		<relationship name="mixer">
 			<destination>{c4357889-df97-445d-8d8a-aba61c7070e8}</destination>
@@ -36,7 +36,7 @@
 			<destination>{4de6729a-12ee-40ca-b2c0-7584e1f9e050}</destination>
 		</relationship>
 		<relationship name="banks">
-			<destination>{77cfd301-7465-488a-b6e1-45fd672f1ce7}</destination>
+			<destination>{e2b0b3a6-e099-4d44-bfe4-b602fa3865b1}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixer" id="{c4357889-df97-445d-8d8a-aba61c7070e8}">
@@ -134,12 +134,12 @@
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{eb63c8a7-5f04-46c0-96de-69bb07f10381}">
-		<property name="volume">
-			<value>-8</value>
-		</property>
 		<property name="name">
-			<value>Audio 1</value>
+			<value>Music</value>
 		</property>
+		<relationship name="modulators">
+			<destination>{e40a415c-1b84-4f5a-a56d-9bd1b9295854}</destination>
+		</relationship>
 		<relationship name="effectChain">
 			<destination>{6730b159-674d-402f-b64a-d21fe1cb1a46}</destination>
 		</relationship>
@@ -171,6 +171,17 @@
 	</object>
 	<object class="MixerBusPanner" id="{61a01407-ec31-4b3e-ab6e-80701ff8a650}" />
 	<object class="MixerBusFader" id="{d825097f-fb9f-475c-b754-060e7e8d0557}" />
+	<object class="ADSRModulator" id="{e40a415c-1b84-4f5a-a56d-9bd1b9295854}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>volume</value>
+		</property>
+		<property name="initialValue">
+			<value>-80</value>
+		</property>
+		<property name="finalValue">
+			<value>-80</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{6730b159-674d-402f-b64a-d21fe1cb1a46}">
 		<relationship name="effects">
 			<destination>{852542e7-17cb-4888-908e-3e9bcd849b89}</destination>
