@@ -11,7 +11,6 @@ public class NetworkingExplanation : NetworkBehaviour
 {
     int localValue;
     NetworkVariable<int> networkValue;
-    GameObject localObj;
 
     // Rpc's will always run Only on where they are sent to (for all possible options Type "SendTo." and look through the sugestions or ctrl click SendTo)
 
@@ -32,26 +31,6 @@ public class NetworkingExplanation : NetworkBehaviour
         // when getting this on any location it WILL result in 2
    
         // NetworkVariables can not hold Objects like GameObjects for that use the peramiters of Rpc's
-    }
-
-    [Rpc(SendTo.Server)]
-    void PeramiterFunctionRpc(GameObject obj)
-    {
-        // here you can do stuff with the object
-    }
-
-    [Rpc(SendTo.Everyone)]
-    void SyncPeramiterFunctionRpc(GameObject obj)
-    {
-        // if you want to store objects on all local devices you cant use NetworkVariables, instead you can use this
-        localObj = obj;
-    }
-
-    [Rpc(SendTo.Server)]
-    int ReturnFunctionRpc()
-    {
-        // Rpc call DO support return values and they will be send back to the original caller
-        return 1;
     }
 
     // i like using Awake over start. it is slightly more optimal
