@@ -27,6 +27,6 @@ public class CameraManager : MonoBehaviour
     {
         bool oldState = flipped;
         flipped = state;
-        return oldState;
+        return oldState;    
     }
 }
