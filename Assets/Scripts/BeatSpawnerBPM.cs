@@ -14,7 +14,7 @@ public class BeatSpawnerBPM : MonoBehaviour
 
     private void Start()
     {
-        if(currentBeat >= 0) currentBeat = MusicManager.me.timelineInfo.currentBeat;
+        //if(currentBeat >= 0) currentBeat = MusicManager.me.timelineInfo.currentBeat;
     }
 
     private void Update()
