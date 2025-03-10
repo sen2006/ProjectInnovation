@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.Services.Core;
 using System.Threading.Tasks;
@@ -5,49 +7,113 @@ using System.Threading.Tasks;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
 
-public class movement : MonoBehaviour
+public class Movement : MonoBehaviour
 {
+    // Components
     private Rigidbody rb;
     private CapsuleCollider col;
     private Transform tf;
 
-    [SerializeField] private float moveSpeed = 0;
-    [SerializeField] private float strafeSpeed = 0;
-    [SerializeField] private float strafeAirControl = 0;
-    [SerializeField] private float jumpForce = 0;
-    [SerializeField] private float wallJumpForce = 0;
-    [SerializeField] private int   wallJumpControlGracePeriodMS = 0;
-    [SerializeField] private float slideMult = 0;
+    // Movement Settings
+    [Header("Movement Settings")]
+    [SerializeField] private float moveSpeed = 12f;
+    [SerializeField] private float strafeSpeed = 8f;
+    [SerializeField] private float strafeAirControl = 6f;
 
+    // Jump Settings
+    [Header("Jump Settings")]
+    [SerializeField] private float jumpForce = 20f; // Faster Jumping
+
+    // Sliding Settings
+    [Header("Sliding Settings")]
+    [SerializeField] private float slideMult = 0.5f;
+
+    // Gravity & Physics
+    [Header("Gravity & Physics")]
+    [SerializeField] private float gravityForce = 15f; // Adjusted Gravity
+
+    // Timing Mechanics
+    [Header("Timing Mechanics")]
+    [SerializeField] private float coyoteTime = 0.1f; // Coyote Time Duration
+    [SerializeField] private float jumpBufferTime = 0.1f; // Jump Buffer Duration
+
+    // Wall Running
+    [Header("Wall Running Settings")]
+    [SerializeField] private float wallRunGravity = 0.5f;
+    [SerializeField] private float wallRunSpeed = 10f;
+    [SerializeField] private float jumpOffForce = 15f;
+    [SerializeField] private float wallDetectionRange = 1.2f;
+    [SerializeField] private float wallRunCooldown = 0.5f;
+    [SerializeField] private float jumpPushForce = 10f;
+
+    // Camera Effects
+    [Header("Camera Effects")]
+    [SerializeField] private float cameraTiltAmount = 15f;
+    [SerializeField] private float cameraTiltSpeed = 5f;
+
+    // Layers
+    [Header("Layers")]
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wallLayer;
 
-    [SerializeField] Transform cameraTransfrom;
+    // References
+    [Header("References")]
+    [SerializeField] Transform cameraTransform;
 
+    // Internal State
     private float colliderHeight;
-
     private bool controlLocked = false;
-
-    //TODO: add serializable controls
+    private bool isGrounded;
+    private float coyoteTimeCounter;
+    private float jumpBufferCounter;
+    private bool isWallRunning = false;
+    private bool isWallLeft, isWallRight;
+    private bool canWallRun = true;
 
     async void Start()
     {
         await UnityServices.InitializeAsync();
-        Debug.Assert(cameraTransfrom != null, "cameraTransform is not assigned");
+        Debug.Assert(cameraTransform != null, "cameraTransform is not assigned");
 
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
         tf = GetComponent<Transform>();
 
         colliderHeight = col.height;
+        rb.useGravity = false; // We handle gravity manually
     }
 
     void Update()
     {
+        ApplyGravity();
         MoveForward();
         InputHandler();
-        WallRide();
-        Debug.Log(rb.linearVelocity.z);
+        CheckForWalls();
+        HandleWallRunning();
+        HandleWallJump();
+
+        // Update Grounded Status
+        isGrounded = IsGrounded();
+
+        // Handle Coyote Time
+        if (isGrounded)
+        {
+            coyoteTimeCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+        }
+
+        // Handle Jump Buffer
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            jumpBufferCounter = jumpBufferTime;
+        }
+        else
+        {
+            jumpBufferCounter -= Time.deltaTime;
+        }
     }
 
     void MoveForward()
@@ -55,70 +121,122 @@ public class movement : MonoBehaviour
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, moveSpeed);
     }
 
+    void ApplyGravity()
+    {
+        Debug.Log($"Before Gravity: {rb.linearVelocity}"); // Check if velocity is reset
+        if (!isGrounded)
+        {
+            rb.linearVelocity += Vector3.down * gravityForce * Time.deltaTime;
+        }
+        Debug.Log($"After Gravity: {rb.linearVelocity}");
+    }
+
+
     void InputHandler()
     {
         Strafe();
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (jumpBufferCounter > 0 && coyoteTimeCounter > 0)
         {
             Jump();
+            jumpBufferCounter = 0; // Reset buffer after jump
         }
 
         Slide(Input.GetKey(KeyCode.LeftControl));
     }
 
-    void WallRide()
+    void CheckForWalls()
     {
-        if (((IsOnWallLeft() && Input.GetKey(KeyCode.A)) || (IsOnWallRight() && Input.GetKey(KeyCode.D))) && !controlLocked)
+        if (!canWallRun) return;
+
+        isWallLeft = IsOnWallLeft();
+        isWallRight = IsOnWallRight();
+    }
+
+    void HandleWallRunning()
+    {
+        if ((isWallLeft || isWallRight) && !IsGrounded() && canWallRun)
         {
-            rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
+            StartWallRun();
         }
         else
         {
-            rb.constraints = RigidbodyConstraints.FreezeRotation;
+            StopWallRun();
         }
+    }
+
+    void StartWallRun()
+    {
+        isWallRunning = true;
+        rb.useGravity = false;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, -wallRunGravity, wallRunSpeed);
+
+        float targetTilt = isWallLeft ? -cameraTiltAmount : cameraTiltAmount;
+        Quaternion targetRotation = Quaternion.Euler(0, 0, targetTilt);
+        cameraTransform.localRotation = Quaternion.Lerp(cameraTransform.localRotation, targetRotation, Time.deltaTime * cameraTiltSpeed);
+    }
+
+    void StopWallRun()
+    {
+        isWallRunning = false;
+        rb.useGravity = true;
+
+        Quaternion targetRotation = Quaternion.Euler(0, 0, 0);
+        cameraTransform.localRotation = Quaternion.Lerp(cameraTransform.localRotation, targetRotation, Time.deltaTime * cameraTiltSpeed);
+    }
+
+    void HandleWallJump()
+    {
+        if (isWallRunning && Input.GetKeyDown(KeyCode.Space))
+        {
+            // Apply a stronger sideways push, with a small vertical boost
+            Vector3 jumpDirection = (isWallLeft ? transform.right : -transform.right) * jumpPushForce + Vector3.up * jumpOffForce * 0.5f;
+            rb.linearVelocity = jumpDirection;
+
+            StopWallRun();
+            StartCoroutine(WallRunCooldown());
+        }
+    }
+
+    IEnumerator WallRunCooldown()
+    {
+        canWallRun = false;
+        yield return new WaitForSeconds(wallRunCooldown);
+        canWallRun = true;
     }
 
     void Strafe()
     {
         if (controlLocked) return;
 
-        if (IsGrounded())
+        float horizontalInput = Input.GetAxis("Horizontal");
+
+        if (isGrounded)
         {
-            rb.linearVelocity = new Vector3(Input.GetAxis("Horizontal") * strafeSpeed, rb.linearVelocity.y, rb.linearVelocity.z);
+            rb.linearVelocity = new Vector3(horizontalInput * strafeSpeed, rb.linearVelocity.y, rb.linearVelocity.z);
         }
         else
         {
-            rb.AddForce(new Vector3(Input.GetAxis("Horizontal") * strafeAirControl, 0, 0));
+            rb.AddForce(new Vector3(horizontalInput * strafeAirControl, 0, 0), ForceMode.Acceleration);
             rb.linearVelocity = new Vector3(Mathf.Clamp(rb.linearVelocity.x, -strafeSpeed, strafeSpeed), rb.linearVelocity.y, rb.linearVelocity.z);
+
+            // ** Improved Air Control: Smooth Stop When Input is Released **
+            if (Mathf.Approximately(horizontalInput, 0))
+            {
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x * 0.85f, rb.linearVelocity.y, rb.linearVelocity.z);
+            }
         }
     }
-        
 
     void Jump()
     {
-        if (IsGrounded())
-        {
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
-        }
-        else if (IsOnWallLeft())
-        {
-            rb.constraints = RigidbodyConstraints.FreezeRotation;
-            rb.linearVelocity = new Vector3(wallJumpForce, jumpForce, rb.linearVelocity.z);
-            LockStrafe(wallJumpControlGracePeriodMS);
-        }
-        else if (IsOnWallRight())
-        {
-            rb.constraints = RigidbodyConstraints.FreezeRotation;
-            rb.linearVelocity = new Vector3(-wallJumpForce, jumpForce, rb.linearVelocity.z);
-            LockStrafe(wallJumpControlGracePeriodMS);
-        }
-        
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
+        coyoteTimeCounter = 0; // Reset coyote time after jump
     }
 
     void Slide(bool shouldSlide)
     {
-        if (shouldSlide && IsGrounded())
+        if (shouldSlide && isGrounded)
         {
             col.height = colliderHeight * slideMult;
             col.center = new Vector3(0, -col.height / 2, 0);
@@ -128,8 +246,7 @@ public class movement : MonoBehaviour
             col.height = colliderHeight;
             col.center = Vector3.zero;
         }
-
-        cameraTransfrom.localPosition = col.center + new Vector3(0, col.height / 2 - col.radius, 0);
+        cameraTransform.localPosition = col.center + new Vector3(0, col.height / 2 - col.radius, 0);
     }
 
     private bool IsGrounded()
@@ -154,14 +271,5 @@ public class movement : MonoBehaviour
         return Physics.CapsuleCast(new Vector3(pos.x, pos.y - transform.localScale.y + col.radius, pos.z),
             new Vector3(pos.x, pos.y + col.height / 2 - col.radius, pos.z), col.radius - Physics.defaultContactOffset,
             Vector3.right, .1f, wallLayer);
-    }
-
-    private async void LockStrafe(int ms)
-    {
-        if(controlLocked) return;
-
-        controlLocked = true;
-        await Task.Delay(ms);
-        controlLocked = false;
     }
 }

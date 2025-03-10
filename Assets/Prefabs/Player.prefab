@@ -289,17 +289,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04bd650daf2528f4c8189e29d096f1d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  strafeSpeed: 5
-  strafeAirControl: 5
-  jumpForce: 7
-  wallJumpForce: 5
-  wallJumpControlGracePeriodMS: 300
+  moveSpeed: 10
+  strafeSpeed: 8
+  strafeAirControl: 6
+  jumpForce: 14
   slideMult: 0.5
+  gravityForce: 28
+  coyoteTime: 0.2
+  jumpBufferTime: 0.5
+  wallRunGravity: 0.3
+  wallRunSpeed: 10
+  jumpOffForce: 25
+  wallDetectionRange: 0.8
+  wallRunCooldown: 0.5
+  jumpPushForce: 100
+  cameraTiltAmount: 20
+  cameraTiltSpeed: 5
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
   wallLayer:
     serializedVersion: 2
     m_Bits: 64
-  cameraTransfrom: {fileID: 4113583914823498141}
+  cameraTransform: {fileID: 4113583914823498141}
