@@ -11,7 +11,7 @@ public class GridManager : MonoBehaviour
     private Transform[,] grid;
     private float[,] waveOffsets;
 
-    public Transform[,] Grid => grid; // Public getter for ShockwaveManager
+    public Transform[,] Grid => grid; // Public getter for ShockwaveAbility
 
     void Start()
     {
