@@ -1,5 +1,7 @@
 using UnityEngine;
-using System.Collections;
+using Unity.Collections;
+using Unity.Jobs;
+using Unity.Mathematics;
 using System.Collections.Generic;
 
 public class ShockwaveAbility : MonoBehaviour
@@ -8,40 +10,22 @@ public class ShockwaveAbility : MonoBehaviour
     public float shockwaveDuration = 0.5f;
     public Gradient shockwaveGradient;
 
-    private List<GridManager> gridManagers = new List<GridManager>(); // Track all GridManagers
-    private Dictionary<Transform, Vector3> originalScales = new Dictionary<Transform, Vector3>();
+    private List<GridManager> gridManagers = new List<GridManager>();
     private List<Shockwave> activeShockwaves = new List<Shockwave>();
 
-    IEnumerator Start()
+    void Start()
     {
-        yield return new WaitForEndOfFrame(); // Wait for GridManager to initialize
-
         gridManagers.AddRange(FindObjectsByType<GridManager>(FindObjectsSortMode.None));
-
         if (gridManagers.Count == 0)
         {
-            Debug.LogError("No GridManager instances found! Make sure they exist in the scene.");
-            yield break;
+            Debug.LogError("No GridManager instances found!");
         }
-
-        CacheOriginalScales();
     }
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0)) DetectShockwaveOrigin();
         UpdateShockwaves();
-    }
-
-    void CacheOriginalScales()
-    {
-        //foreach (GridManager gridManager in gridManagers)
-        //{
-        //    foreach (Transform obj in gridManager.Grid)
-        //    {
-        //        originalScales[obj] = obj.localScale;
-        //    }
-        //}
     }
 
     void DetectShockwaveOrigin()
@@ -60,9 +44,9 @@ public class ShockwaveAbility : MonoBehaviour
         {
             Shockwave wave = activeShockwaves[i];
             float elapsedTime = currentTime - wave.startTime;
-            float radiusSqr = (elapsedTime * shockwaveSpeed) * (elapsedTime * shockwaveSpeed);
+            float radius = elapsedTime * shockwaveSpeed;
 
-            if (radiusSqr > shockwaveMaxRadius * shockwaveMaxRadius)
+            if (radius > shockwaveMaxRadius)
             {
                 activeShockwaves.RemoveAt(i);
                 continue;
@@ -70,53 +54,30 @@ public class ShockwaveAbility : MonoBehaviour
 
             foreach (GridManager gridManager in gridManagers)
             {
-                //foreach (Transform obj in gridManager.Grid)
-                //{
-                 //   float distanceSqr = (obj.position - wave.origin).sqrMagnitude;
-                 //   if (distanceSqr < radiusSqr && distanceSqr > (radiusSqr - 2.25f)) // Using squared values
-                 //   {
-                 //       StartCoroutine(ShockwaveEffect(obj, Mathf.Sqrt(distanceSqr) / shockwaveMaxRadius));
-                 //   }
-                //}
+                ApplyShockwaveEffect(gridManager, wave.origin, radius);
             }
         }
     }
 
-    IEnumerator ShockwaveEffect(Transform obj, float normalizedDistance)
+    void ApplyShockwaveEffect(GridManager gridManager, Vector3 waveOrigin, float radius)
     {
-        if (!originalScales.ContainsKey(obj))
+        if (!gridManager.positions.IsCreated || !gridManager.colors.IsCreated) return;
+
+        ApplyShockwaveJob shockwaveJob = new ApplyShockwaveJob
         {
-            Debug.LogWarning($"Missing key in originalScales dictionary: {obj.name}");
-            yield break; // Exit the coroutine if key is missing
-        }
+            waveOrigin = waveOrigin,
+            radius = radius,
+            heightMultiplier = heightMultiplier,
+            colors = gridManager.colors,
+            positions = gridManager.positions,
+            gradientColors = gridManager.gradientColors,
+            gradientResolution = gridManager.gradientColors.Length
+        };
 
-        Vector3 originalScale = originalScales[obj]; // Safe access now
-        Renderer rend = obj.GetComponent<Renderer>();
-        Color originalColor = rend.material.color;
-        Color waveColor = shockwaveGradient.Evaluate(normalizedDistance);
-        float halfDuration = shockwaveDuration / 2;
-        float startTime = Time.time;
-        float targetHeight = originalScale.y * heightMultiplier;
+        JobHandle jobHandle = shockwaveJob.Schedule(gridManager.positions.Length, 64);
+        jobHandle.Complete();
 
-        while (Time.time - startTime < halfDuration)
-        {
-            float t = (Time.time - startTime) / halfDuration;
-            obj.localScale = new Vector3(originalScale.x, Mathf.Lerp(originalScale.y, targetHeight, t), originalScale.z);
-            rend.material.color = Color.Lerp(originalColor, waveColor, t);
-            yield return null;
-        }
-
-        startTime = Time.time;
-        while (Time.time - startTime < halfDuration)
-        {
-            float t = (Time.time - startTime) / halfDuration;
-            obj.localScale = new Vector3(originalScale.x, Mathf.Lerp(targetHeight, originalScale.y, t), originalScale.z);
-            rend.material.color = Color.Lerp(waveColor, originalColor, t);
-            yield return null;
-        }
-
-        obj.localScale = originalScale;
-        rend.material.color = originalColor;
+        gridManager.ApplyRendering();
     }
 
     private class Shockwave
@@ -124,5 +85,33 @@ public class ShockwaveAbility : MonoBehaviour
         public Vector3 origin;
         public float startTime;
         public Shockwave(Vector3 origin, float startTime) { this.origin = origin; this.startTime = startTime; }
+    }
+
+    struct ApplyShockwaveJob : IJobParallelFor
+    {
+        public Vector3 waveOrigin;
+        public float radius;
+        public float heightMultiplier;
+        public int gradientResolution;
+
+        public NativeArray<float3> positions;
+        public NativeArray<Color> colors;
+        [ReadOnly] public NativeArray<Color> gradientColors;
+
+        public void Execute(int index)
+        {
+            float3 pos = positions[index];
+            float distance = math.distance(new float3(waveOrigin.x, 0, waveOrigin.z), new float3(pos.x, 0, pos.z));
+
+            if (distance < radius && distance > (radius - 2.5f))
+            {
+                float effectStrength = math.saturate(1 - (distance / radius));
+                pos.y += effectStrength * heightMultiplier;
+                positions[index] = pos;
+
+                int colorIndex = math.clamp((int)(effectStrength * (gradientResolution - 1)), 0, gradientResolution - 1);
+                colors[index] = gradientColors[colorIndex];
+            }
+        }
     }
 }

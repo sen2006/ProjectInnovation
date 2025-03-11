@@ -16,9 +16,9 @@ public class GridManager : MonoBehaviour
 
     private Matrix4x4[] instanceMatrices;
     private NativeArray<float> waveOffsets;
-    private NativeArray<float3> positions;
-    private NativeArray<Color> colors;
-    private NativeArray<Color> gradientColors;
+    public NativeArray<float3> positions;
+    public NativeArray<Color> colors;
+    public NativeArray<Color> gradientColors;
     private MaterialPropertyBlock propBlock;
     private List<Vector4> colorVectors;
 
@@ -77,7 +77,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    void ApplyRendering()
+    public void ApplyRendering()
     {
         colorVectors.Clear();
         for (int i = 0; i < positions.Length; i++)

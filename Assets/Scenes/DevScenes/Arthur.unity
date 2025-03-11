@@ -822,7 +822,7 @@ MonoBehaviour:
   colorGradient:
     serializedVersion: 2
     key0: {r: 0.16037738, g: 0.16037738, b: 0.16037738, a: 1}
-    key1: {r: 0.3301887, g: 0.3301887, b: 0.3301887, a: 1}
+    key1: {r: 0.23, g: 0.23, b: 0.23, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
