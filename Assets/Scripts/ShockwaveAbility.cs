@@ -35,13 +35,13 @@ public class ShockwaveAbility : MonoBehaviour
 
     void CacheOriginalScales()
     {
-        foreach (GridManager gridManager in gridManagers)
-        {
-            foreach (Transform obj in gridManager.Grid)
-            {
-                originalScales[obj] = obj.localScale;
-            }
-        }
+        //foreach (GridManager gridManager in gridManagers)
+        //{
+        //    foreach (Transform obj in gridManager.Grid)
+        //    {
+        //        originalScales[obj] = obj.localScale;
+        //    }
+        //}
     }
 
     void DetectShockwaveOrigin()
@@ -70,14 +70,14 @@ public class ShockwaveAbility : MonoBehaviour
 
             foreach (GridManager gridManager in gridManagers)
             {
-                foreach (Transform obj in gridManager.Grid)
-                {
-                    float distanceSqr = (obj.position - wave.origin).sqrMagnitude;
-                    if (distanceSqr < radiusSqr && distanceSqr > (radiusSqr - 2.25f)) // Using squared values
-                    {
-                        StartCoroutine(ShockwaveEffect(obj, Mathf.Sqrt(distanceSqr) / shockwaveMaxRadius));
-                    }
-                }
+                //foreach (Transform obj in gridManager.Grid)
+                //{
+                 //   float distanceSqr = (obj.position - wave.origin).sqrMagnitude;
+                 //   if (distanceSqr < radiusSqr && distanceSqr > (radiusSqr - 2.25f)) // Using squared values
+                 //   {
+                 //       StartCoroutine(ShockwaveEffect(obj, Mathf.Sqrt(distanceSqr) / shockwaveMaxRadius));
+                 //   }
+                //}
             }
         }
     }
