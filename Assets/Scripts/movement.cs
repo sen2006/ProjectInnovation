@@ -238,14 +238,20 @@ public class Movement : MonoBehaviour
         {
             col.height = colliderHeight * slideMult;
             col.center = new Vector3(0, -col.height / 2, 0);
+            cameraTransform.GetComponent<CameraEffects>().ApplySlideEffect(0.7f, true); // Move down & tilt BACKWARD
+
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, moveSpeed * 1.5f); // Temporary speed boost
         }
         else
         {
             col.height = colliderHeight;
             col.center = Vector3.zero;
+            cameraTransform.GetComponent<CameraEffects>().ApplySlideEffect(0f, false); // Reset camera position & tilt
         }
-        cameraTransform.localPosition = col.center + new Vector3(0, col.height / 2 - col.radius, 0);
     }
+
+
+
 
     private bool IsGrounded()
     {
