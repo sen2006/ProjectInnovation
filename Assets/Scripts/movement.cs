@@ -70,6 +70,9 @@ public class Movement : MonoBehaviour
     private bool isWallLeft, isWallRight;
     private bool canWallRun = true;
 
+    // Control Delay Time
+    public float delayTime = 0;
+
     async void Start()
     {
         await UnityServices.InitializeAsync();
@@ -136,7 +139,7 @@ public class Movement : MonoBehaviour
 
         if (jumpBufferCounter > 0 && coyoteTimeCounter > 0)
         {
-            Jump();
+             Jump();
             jumpBufferCounter = 0; // Reset buffer after jump
         }
 
