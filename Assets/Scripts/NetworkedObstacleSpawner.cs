@@ -16,6 +16,9 @@ public class NetworkedObstacleSpawner : NetworkBehaviour
     [SerializeField] private float movingBlockOffsetX = 2f;  // Offset for moving block
     [SerializeField] private float spawnHeight = 1f; // Adjust spawn height if needed
 
+    [Header("Distortion Effects")]
+    [SerializeField] private CameraEffects cameraEffects;
+
     private bool canSpawnBarrier = true;
     private bool canSpawnMovingBlock = true;
 
@@ -56,5 +59,34 @@ public class NetworkedObstacleSpawner : NetworkBehaviour
     {
         yield return new WaitForSeconds(6f);
         canSpawnMovingBlock = true;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdateAudioDistortionServerRpc(float distortionValue)
+    {
+        UpdateAudioDistortionClientRpc(distortionValue);
+    }
+
+    [ClientRpc]
+    private void UpdateAudioDistortionClientRpc(float distortionValue)
+    {
+        // Pseudo-code for audio distortion effect
+        Debug.Log($"Audio Distortion Updated: {distortionValue}");
+        // AudioManager.SetDistortionLevel(distortionValue);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdateCameraDistortionServerRpc(float distortionValue)
+    {
+        UpdateCameraDistortionClientRpc(distortionValue);
+    }
+
+    [ClientRpc]
+    private void UpdateCameraDistortionClientRpc(float distortionValue)
+    {
+        if (cameraEffects != null)
+        {
+            cameraEffects.ApplyDistortion(distortionValue);
+        }
     }
 }

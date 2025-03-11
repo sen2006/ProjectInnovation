@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2396521284904968961}
   - component: {fileID: 4712516699375762712}
   - component: {fileID: 7505917360473535101}
+  - component: {fileID: 2707944998316678340}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -137,6 +138,21 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &2707944998316678340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8302881570996757572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ada82fe913c7da41b1b0254d7cd9c83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTransform: {fileID: 0}
+  cameraOffset: {x: 0, y: 1.5, z: -3}
+  followSpeed: 10
 --- !u!1 &9191532357592237585
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,6 +329,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   cameraTransform: {fileID: 4113583914823498141}
+  cameraEffects: {fileID: 0}
 --- !u!114 &5324179419526296854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,3 +345,5 @@ MonoBehaviour:
   phaseDuration: 2
   cooldownDuration: 5
   phaseableWallTag: PhaseableWall
+  normalMaterial: {fileID: 0}
+  glitchMaterial: {fileID: 0}
