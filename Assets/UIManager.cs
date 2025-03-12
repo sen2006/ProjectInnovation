@@ -11,7 +11,7 @@ public class UIManager : MonoBehaviour
     {
         Debug.Assert(PcUI != null, "No PC UI assigned");
         Debug.Assert(MobileUI != null, "No Mobile UI assigned");
-        Debug.Assert(PcUI != null, "No GameManager assigned");
+        Debug.Assert(gameManager != null, "No GameManager assigned");
     }
 
     private void Update()
@@ -21,7 +21,12 @@ public class UIManager : MonoBehaviour
 
     private void AutoToggleUI()
     {
-        if (gameManager.connectionState != GameManager.ConnectionState.Connected || !enableAutoUIToggling) return;
+        if (gameManager.connectionState != GameManager.ConnectionState.Connected || !enableAutoUIToggling)
+        {
+            PcUI.SetActive(false);
+            MobileUI.SetActive(false);
+            return;
+        }
 
         switch (gameManager.playerType)
         {

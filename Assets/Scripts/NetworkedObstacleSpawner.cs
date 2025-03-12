@@ -78,15 +78,6 @@ public class NetworkedObstacleSpawner : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void UpdateCameraDistortionServerRpc(float distortionValue)
     {
-        UpdateCameraDistortionClientRpc(distortionValue);
-    }
-
-    [ClientRpc]
-    private void UpdateCameraDistortionClientRpc(float distortionValue)
-    {
-        if (cameraEffects != null)
-        {
-            cameraEffects.ApplyDistortion(distortionValue);
-        }
+        cameraEffects.ApplyDistortion(distortionValue);
     }
 }

@@ -27,11 +27,20 @@ public class GameManager : NetworkBehaviour
     public ConnectionState connectionState { get; private set; }
     private ISession session;
     [SerializeField] NetworkManager networkManager;
+    /// <summary>
+    /// 0=Dont override, 1=PC, 2=mobile
+    /// </summary>
+    [SerializeField, Range(0, 2)] int overridePlayerType = 0;
 
-
-    [SerializeField] RpcTest rpcTest;
-
-
+    public void Update()
+    {
+        if (overridePlayerType == 0) return;
+        switch (overridePlayerType)
+        {
+            case 1: playerType = PlayerType.PC; break;
+            case 2: playerType = PlayerType.Mobile; break;
+        }
+    }
 
     public async void Awake()
     {
@@ -60,8 +69,6 @@ public class GameManager : NetworkBehaviour
             case 2: playerType = PlayerType.Mobile; break;
         }
         Debug.Log("LocalClientType:" + GetLocalPlayerType());
-
-        rpcTest.sendRpcs();
     }
 
     public PlayerType GetLocalPlayerType() { return playerType; }

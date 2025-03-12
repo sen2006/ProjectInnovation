@@ -302,7 +302,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3636396930432209654}
-  - component: {fileID: 7159699661976067614}
+  - component: {fileID: 4013656194193140987}
   - component: {fileID: 6021293180825893531}
   - component: {fileID: 4236535270941682793}
   m_Layer: 0
@@ -327,7 +327,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8201505299463175140}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7159699661976067614
+--- !u!114 &4013656194193140987
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -339,10 +339,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 4118344829
+  GlobalObjectIdHash: 2957820234
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
-  Ownership: 8
+  Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 0
   ActiveSceneSynchronization: 0
@@ -366,7 +366,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   networkManager: {fileID: 0}
-  rpcTest: {fileID: 0}
+  overridePlayerType: 0
 --- !u!114 &4236535270941682793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -379,10 +379,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c68b34608f441642aa3db40c6ad131c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PCUI: {fileID: 3900691418262332159}
+  PcUI: {fileID: 3900691418262332159}
   MobileUI: {fileID: 2934288772979772125}
   gameManager: {fileID: 6021293180825893531}
-  enableAutoUiToggling: 1
+  enableAutoUIToggling: 1
 --- !u!1 &2016871424487730178
 GameObject:
   m_ObjectHideFlags: 0
@@ -433,6 +433,10 @@ MonoBehaviour:
   glitchStormButton: {fileID: 0}
   controlLagButton: {fileID: 0}
   invertWorldButton: {fileID: 0}
+  stormDurationMS: 0
+  controlLagDurationMS: 0
+  controlLagDelay: 0
+  movement: {fileID: 0}
   invertDurationMS: 0
   cameraManager: {fileID: 0}
 --- !u!114 &3524307186639078799
@@ -447,7 +451,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2378034788
+  GlobalObjectIdHash: 1234944453
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -927,7 +931,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 95037050036914150}
-  - component: {fileID: 4346840070276037852}
+  - component: {fileID: 9142522541705117787}
   m_Layer: 0
   m_Name: Networking
   m_TagString: Untagged
@@ -950,7 +954,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8201505299463175140}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4346840070276037852
+--- !u!114 &9142522541705117787
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -962,10 +966,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3247902349
+  GlobalObjectIdHash: 2012444197
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
-  Ownership: 8
+  Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 0
   ActiveSceneSynchronization: 0
