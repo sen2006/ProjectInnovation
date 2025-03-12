@@ -69,9 +69,15 @@ public class Movement : MonoBehaviour
     private bool isWallRunning = false;
     private bool isWallLeft, isWallRight;
     private bool canWallRun = true;
+    private bool shouldSlide = false;
 
     // Control Delay Time
-    public float delayTime = 0;
+    [SerializeField] private float delayTime;
+
+    public void SetDelay(float delay)
+    {
+        delayTime = delay;
+    }
 
     async void Start()
     {
@@ -93,7 +99,7 @@ public class Movement : MonoBehaviour
         InputHandler();
         CheckForWalls();
         HandleWallRunning();
-        HandleWallJump();
+        //HandleWallJump();
 
         // Update Grounded Status
         isGrounded = IsGrounded();
@@ -111,12 +117,18 @@ public class Movement : MonoBehaviour
         // Handle Jump Buffer
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            jumpBufferCounter = jumpBufferTime;
+            Invoke("DelayedJump", delayTime);
+            Invoke("HandleWallJump", delayTime);
         }
         else
         {
             jumpBufferCounter -= Time.deltaTime;
         }
+    }
+
+    private void DelayedJump()
+    {
+        jumpBufferCounter = jumpBufferTime;
     }
 
     void MoveForward()
@@ -143,7 +155,8 @@ public class Movement : MonoBehaviour
             jumpBufferCounter = 0; // Reset buffer after jump
         }
 
-        Slide(Input.GetKey(KeyCode.LeftControl));
+        StartCoroutine(checkSlideControl(Input.GetKey(KeyCode.LeftControl)));
+        Slide();
     }
 
     void CheckForWalls()
@@ -188,7 +201,7 @@ public class Movement : MonoBehaviour
 
     void HandleWallJump()
     {
-        if (isWallRunning && Input.GetKeyDown(KeyCode.Space))
+        if (isWallRunning)
         {
             // Apply a stronger sideways push, with a small vertical boost
             Vector3 jumpDirection = (isWallLeft ? transform.right : -transform.right) * jumpPushForce + Vector3.up * jumpOffForce * 0.5f;
@@ -235,7 +248,13 @@ public class Movement : MonoBehaviour
         coyoteTimeCounter = 0; // Reset coyote time after jump
     }
 
-    void Slide(bool shouldSlide)
+    IEnumerator checkSlideControl(bool slideInput)
+    {
+        yield return new WaitForSeconds(delayTime);
+        shouldSlide = slideInput;
+    }
+
+    void Slide()
     {
         if (shouldSlide && isGrounded)
         {
@@ -258,6 +277,10 @@ public class Movement : MonoBehaviour
 
     private bool IsGrounded()
     {
+        if (rb.linearVelocity.y > 0.01f)
+        {
+            return false;
+        }
         Vector3 pos = tf.position;
         return Physics.CapsuleCast(new Vector3(pos.x, pos.y - transform.localScale.y + col.radius, pos.z),
             new Vector3(pos.x, pos.y + col.height / 2 - col.radius, pos.z), col.radius - Physics.defaultContactOffset,
