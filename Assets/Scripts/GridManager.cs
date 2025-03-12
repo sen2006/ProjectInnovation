@@ -17,6 +17,7 @@ public class GridManager : MonoBehaviour
     private Matrix4x4[] instanceMatrices;
     private NativeArray<float> waveOffsets;
     public NativeArray<float3> positions;
+    public NativeArray<float3> scales;
     public NativeArray<Color> colors;
     public NativeArray<Color> gradientColors;
     private MaterialPropertyBlock propBlock;
@@ -59,6 +60,7 @@ public class GridManager : MonoBehaviour
         instanceMatrices = new Matrix4x4[totalInstances];
         waveOffsets = new NativeArray<float>(totalInstances, Allocator.Persistent);
         positions = new NativeArray<float3>(totalInstances, Allocator.Persistent);
+        scales = new NativeArray<float3>(totalInstances, Allocator.Persistent); // ✅ Initialize scales
         colors = new NativeArray<Color>(totalInstances, Allocator.Persistent);
         colorVectors = new List<Vector4>(totalInstances);
         propBlock = new MaterialPropertyBlock();
@@ -70,6 +72,7 @@ public class GridManager : MonoBehaviour
             for (int z = 0; z < height; z++)
             {
                 positions[index] = new float3(x * spacing, 0, z * spacing) + (float3)basePosition;
+                scales[index] = new float3(1, 1, 1); // ✅ Default scale (1,1,1)
                 waveOffsets[index] = UnityEngine.Random.Range(0f, Mathf.PI * 2);
                 colors[index] = Color.white;
                 index++;
@@ -86,6 +89,15 @@ public class GridManager : MonoBehaviour
 
             // ✅ Convert Color to Vector4 and store per-instance color
             colorVectors.Add(new Vector4(colors[i].r, colors[i].g, colors[i].b, colors[i].a));
+        }
+
+        for (int i = 0; i < positions.Length; i++)
+        {
+            instanceMatrices[i] = Matrix4x4.TRS(
+                positions[i],
+                Quaternion.identity,
+                scales[i]  // Use new scale data
+            );
         }
 
         propBlock.SetVectorArray("_BaseColor", colorVectors);
@@ -144,7 +156,3 @@ public class GridManager : MonoBehaviour
         if (gradientColors.IsCreated) gradientColors.Dispose();
     }
 }
-
-
-
-

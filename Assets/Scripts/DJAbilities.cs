@@ -43,7 +43,7 @@ public class DJ : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void BassSlamRpc()
     {
-        shockwaveAbility.AddShockwave(new ShockwaveAbility.Shockwave(new Vector3(1, 1, 1), Time.time));
+        //shockwaveAbility.AddShockwave(new ShockwaveAbility.Shockwave(new Vector3(1, 1, 1), Time.time));
     }
 
     [Rpc(SendTo.Server)]

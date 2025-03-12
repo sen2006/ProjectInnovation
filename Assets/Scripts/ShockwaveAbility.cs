@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -12,6 +12,8 @@ public class ShockwaveAbility : MonoBehaviour
 
     private List<GridManager> gridManagers = new List<GridManager>();
     private List<Shockwave> activeShockwaves = new List<Shockwave>();
+    private NativeArray<bool> affectedCubes; // Track affected cubes using NativeArray
+    private NativeArray<Color> shockwaveGradientColors; // Store shockwave colors
 
     void Start()
     {
@@ -20,6 +22,10 @@ public class ShockwaveAbility : MonoBehaviour
         {
             Debug.LogError("No GridManager instances found!");
         }
+
+        // ✅ Initialize affectedCubes to track cube states
+        int totalInstances = gridManagers.Count > 0 ? gridManagers[0].positions.Length : 0;
+        affectedCubes = new NativeArray<bool>(totalInstances, Allocator.Persistent);
     }
 
     void Update()
@@ -37,14 +43,15 @@ public class ShockwaveAbility : MonoBehaviour
         }
     }
 
-    public void AddShockwave(Shockwave shockwave)
+    public void AddShockwave(Vector3 origin)
     {
-        activeShockwaves.Add(shockwave);
+        activeShockwaves.Add(new Shockwave(origin, Time.time));
     }
 
     void UpdateShockwaves()
     {
         float currentTime = Time.time;
+
         for (int i = activeShockwaves.Count - 1; i >= 0; i--)
         {
             Shockwave wave = activeShockwaves[i];
@@ -62,24 +69,51 @@ public class ShockwaveAbility : MonoBehaviour
                 ApplyShockwaveEffect(gridManager, wave.origin, radius);
             }
         }
+
+        // ✅ Ensure all previously affected cubes continue shrinking
+        foreach (GridManager gridManager in gridManagers)
+        {
+            ApplyShrinkEffect(gridManager);
+        }
     }
 
     void ApplyShockwaveEffect(GridManager gridManager, Vector3 waveOrigin, float radius)
     {
-        if (!gridManager.positions.IsCreated || !gridManager.colors.IsCreated) return;
+        if (!gridManager.positions.IsCreated || !gridManager.colors.IsCreated || !gridManager.scales.IsCreated) return;
 
         ApplyShockwaveJob shockwaveJob = new ApplyShockwaveJob
         {
             waveOrigin = waveOrigin,
             radius = radius,
             heightMultiplier = heightMultiplier,
+            animationSpeed = 0.1f,
+            shrinkSpeed = 0.05f,
             colors = gridManager.colors,
             positions = gridManager.positions,
+            scales = gridManager.scales,
             gradientColors = gridManager.gradientColors,
-            gradientResolution = gridManager.gradientColors.Length
+            gradientResolution = gridManager.gradientColors.Length,
+            affectedCubes = affectedCubes // ✅ Track affected cubes
         };
 
         JobHandle jobHandle = shockwaveJob.Schedule(gridManager.positions.Length, 64);
+        jobHandle.Complete();
+
+        gridManager.ApplyRendering();
+    }
+
+    void ApplyShrinkEffect(GridManager gridManager)
+    {
+        if (!gridManager.positions.IsCreated || !gridManager.scales.IsCreated) return;
+
+        ApplyShrinkJob shrinkJob = new ApplyShrinkJob
+        {
+            scales = gridManager.scales,
+            shrinkSpeed = 0.02f,
+            affectedCubes = affectedCubes // ✅ Use NativeArray<bool> for tracking
+        };
+
+        JobHandle jobHandle = shrinkJob.Schedule(gridManager.positions.Length, 64);
         jobHandle.Complete();
 
         gridManager.ApplyRendering();
@@ -97,26 +131,74 @@ public class ShockwaveAbility : MonoBehaviour
         public Vector3 waveOrigin;
         public float radius;
         public float heightMultiplier;
+        public float animationSpeed;
+        public float shrinkSpeed;
         public int gradientResolution;
 
-        public NativeArray<float3> positions;
+        [ReadOnly] public NativeArray<float3> positions;
+        public NativeArray<float3> scales;
         public NativeArray<Color> colors;
         [ReadOnly] public NativeArray<Color> gradientColors;
+        public NativeArray<bool> affectedCubes; // ✅ Track affected cubes safely
 
         public void Execute(int index)
         {
             float3 pos = positions[index];
             float distance = math.distance(new float3(waveOrigin.x, 0, waveOrigin.z), new float3(pos.x, 0, pos.z));
 
-            if (distance < radius && distance > (radius - 2.5f))
-            {
-                float effectStrength = math.saturate(1 - (distance / radius));
-                pos.y += effectStrength * heightMultiplier;
-                positions[index] = pos;
+            float radiusSqr = radius * radius;
+            float innerRadiusSqr = (radius - 2.5f) * (radius - 2.5f);
+            float3 currentScale = scales[index];
+            float targetScaleY = 1f;
 
-                int colorIndex = math.clamp((int)(effectStrength * (gradientResolution - 1)), 0, gradientResolution - 1);
-                colors[index] = gradientColors[colorIndex];
+            if (distance * distance < radiusSqr && distance * distance > innerRadiusSqr)
+            {
+                targetScaleY = heightMultiplier;
+                affectedCubes[index] = true; // ✅ Mark cube as affected
+
+                // ✅ Correctly normalize distance to range [0, 1]
+                float gradientPos = math.saturate((distance - (radius - 2.5f)) / 2.5f);
+                int gradientIndex = (int)(gradientPos * (gradientResolution - 1));
+                gradientIndex = math.clamp(gradientIndex, 0, gradientResolution - 1);
+
+                colors[index] = gradientColors[gradientIndex];
             }
+
+            float lerpSpeed = targetScaleY > currentScale.y ? animationSpeed : shrinkSpeed;
+            float newScaleY = math.lerp(currentScale.y, targetScaleY, lerpSpeed);
+
+            scales[index] = new float3(currentScale.x, newScaleY, currentScale.z);
         }
     }
+
+    struct ApplyShrinkJob : IJobParallelFor
+    {
+        public NativeArray<float3> scales;
+        public float shrinkSpeed;
+        public NativeArray<bool> affectedCubes; // ✅ Track affected cubes safely
+
+        public void Execute(int index)
+        {
+            if (!affectedCubes[index]) return;
+
+            float3 currentScale = scales[index];
+            float newScaleY = math.lerp(currentScale.y, 1f, shrinkSpeed);
+
+            if (math.abs(newScaleY - 1f) < 0.01f)
+            {
+                newScaleY = 1f;
+                affectedCubes[index] = false; // ✅ Reset when fully shrunk
+            }
+
+            scales[index] = new float3(currentScale.x, newScaleY, currentScale.z);
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (affectedCubes.IsCreated) affectedCubes.Dispose();
+    }
 }
+
+
+
