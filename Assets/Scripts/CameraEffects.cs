@@ -7,9 +7,10 @@ public class CameraEffects : MonoBehaviour
     private Quaternion originalRotation;
     private float distortionAmount = 0f;
     private float slideOffset = 0f;
-    private float slideLerpSpeed = 5f;
+    private float slideLerpSpeed = 15f;
     private float slideTiltAmount = -20f;
     private bool isSliding = false;
+
 
     private void Start()
     {
@@ -36,7 +37,7 @@ public class CameraEffects : MonoBehaviour
 
         if (distortionAmount > 0)
         {
-            float shakeAmount = distortionAmount * 0.6f;
+            float shakeAmount = distortionAmount * 2f;
             Vector3 shakeOffset = new Vector3(
                 Random.Range(-shakeAmount, shakeAmount),
                 Random.Range(-shakeAmount, shakeAmount),
@@ -45,7 +46,7 @@ public class CameraEffects : MonoBehaviour
             targetPosition += shakeOffset;
         }
 
-        // Smoothly transition the camera position and rotation
+        // Smooth transition for camera position & tilt
         cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, targetPosition, Time.deltaTime * slideLerpSpeed);
         cameraTransform.localRotation = Quaternion.Lerp(cameraTransform.localRotation, targetRotation, Time.deltaTime * slideLerpSpeed);
     }

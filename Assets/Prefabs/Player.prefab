@@ -352,8 +352,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 503f5f8e11e289d4e952d5bc430de1b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phaseDuration: 2
+  phaseDuration: 5
   cooldownDuration: 5
   phaseableWallTag: PhaseableWall
-  normalMaterial: {fileID: 0}
-  glitchMaterial: {fileID: 0}
+  normalWallMaterial: {fileID: 2100000, guid: 8ea2d75bae0f7b9448d761b7c4b2c31a, type: 2}
+  glitchWallMaterial: {fileID: 2100000, guid: 9af908bbddb216e458b6cc0fe122b715, type: 2}
