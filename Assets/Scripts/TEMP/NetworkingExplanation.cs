@@ -33,8 +33,14 @@ public class NetworkingExplanation : NetworkBehaviour
         // NetworkVariables can not hold Objects like GameObjects for that use the peramiters of Rpc's
     }
 
-    // i like using Awake over start. it is slightly more optimal
-    private void Awake()
+    [Rpc(SendTo.Server)]
+    void PerameterFunctionRpc(int input)
+    {
+        // here you can do stuff with the input perameter
+    }
+
+        // i like using Awake over start. it is slightly more optimal
+        private void Awake()
     {
         // in case you want to call a function when a NetworkVariable is changed you can add it to the "OnValueChanged"
         networkValue.OnValueChanged += OnNetworkValueChanged;
