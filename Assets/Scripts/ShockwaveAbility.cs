@@ -37,6 +37,11 @@ public class ShockwaveAbility : MonoBehaviour
         }
     }
 
+    public void AddShockwave(Shockwave shockwave)
+    {
+        activeShockwaves.Add(shockwave);
+    }
+
     void UpdateShockwaves()
     {
         float currentTime = Time.time;
@@ -80,7 +85,7 @@ public class ShockwaveAbility : MonoBehaviour
         gridManager.ApplyRendering();
     }
 
-    private class Shockwave
+    public class Shockwave
     {
         public Vector3 origin;
         public float startTime;

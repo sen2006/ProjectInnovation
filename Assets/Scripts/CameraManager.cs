@@ -13,8 +13,9 @@ public class CameraManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void OnPreCull()
+    void Update()
     {
+        GL.invertCulling = flipped;
         Vector3 scale = new Vector3 (1, flipped ? -1 : 1, 1);
         cam.projectionMatrix = camMatrix * Matrix4x4.Scale(scale);
     }
@@ -25,6 +26,7 @@ public class CameraManager : MonoBehaviour
     /// <returns>the old state</returns>
     public bool setFlipped(bool state)
     {
+        Debug.Log("wow2" + state);
         bool oldState = flipped;
         flipped = state;
         return oldState;    

@@ -349,6 +349,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1030753614 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1606938208940863865, guid: 7ead65a890faa0449b0918308e018de6, type: 3}
+  m_PrefabInstance: {fileID: 1550602945}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 593a2fe42fa9d37498c96f9a383b6521, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1451722224
 GameObject:
   m_ObjectHideFlags: 0
@@ -523,21 +534,41 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 971749357090249125, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2276783331
+      objectReference: {fileID: 0}
     - target: {fileID: 1749458643981799268, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
       propertyPath: m_Name
       value: Managers And UI
       objectReference: {fileID: 0}
-    - target: {fileID: 3524307186639078799, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 2796201935
+    - target: {fileID: 6021293180825893531, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: networkManager
+      value: 
+      objectReference: {fileID: 1030753614}
+    - target: {fileID: 7246974792539275835, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: movement
+      value: 
+      objectReference: {fileID: 2069475114}
+    - target: {fileID: 7246974792539275835, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: cameraManager
+      value: 
+      objectReference: {fileID: 1776387001}
+    - target: {fileID: 7246974792539275835, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: bassSlamButton
+      value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 4346840070276037852, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 95910635
+    - target: {fileID: 7246974792539275835, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: controlLagButton
+      value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 7159699661976067614, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 4193374286
+    - target: {fileID: 7246974792539275835, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: glitchStormButton
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7246974792539275835, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: invertWorldButton
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8201505299463175140, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
       propertyPath: m_LocalPosition.x
@@ -584,6 +615,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+--- !u!114 &1776387001 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1211000506117771739, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+  m_PrefabInstance: {fileID: 706783206924459603}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e6fdc7d777b5e248aed52edd2a99add, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2069475114 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1170294418798492703, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+  m_PrefabInstance: {fileID: 706783206924459603}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04bd650daf2528f4c8189e29d096f1d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &706783206924459603
 PrefabInstance:
   m_ObjectHideFlags: 0

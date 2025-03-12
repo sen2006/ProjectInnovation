@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{a8afa929-db76-4012-82c0-d5a89de36441}">
+		<property name="assetPath">
+			<value>Electric Dreams.wav</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>143.00752083333333</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{d20015bc-b33f-4091-84e0-2025682747b6}</destination>
+		</relationship>
+	</object>
+</objects>

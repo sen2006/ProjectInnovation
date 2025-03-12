@@ -13,7 +13,7 @@ public class DJ : NetworkBehaviour
     [SerializeField] private Button invertWorldButton;
 
     [Header("Bass Slam")]
-
+    [SerializeField] private ShockwaveAbility shockwaveAbility;
 
     [Header("Glitch Storm")]
     [SerializeField] private int stormDurationMS = 0;
@@ -43,7 +43,7 @@ public class DJ : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void BassSlamRpc()
     {
-
+        shockwaveAbility.AddShockwave(new ShockwaveAbility.Shockwave(new Vector3(1, 1, 1), Time.time));
     }
 
     [Rpc(SendTo.Server)]
@@ -67,9 +67,9 @@ public class DJ : NetworkBehaviour
 
     private async void ControlLagAsync(int ms)
     {
-
+        movement.SetDelay(controlLagDelay);
         await Task.Delay(ms);
-
+        movement.SetDelay(0);
     }
 
     [Rpc(SendTo.Server)]

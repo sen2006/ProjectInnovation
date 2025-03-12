@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="ParameterPreset" id="{214ddd80-b2cd-48c0-b6a8-93a4ff5382e9}">
+		<property name="name">
+			<value>Distortion</value>
+		</property>
+		<relationship name="folder">
+			<destination>{f4705ea9-178a-4554-bfa8-99cb10c1791c}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{481beb07-a7f1-479d-8a14-3396ea2d099f}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{481beb07-a7f1-479d-8a14-3396ea2d099f}">
+		<property name="isGlobal">
+			<value>true</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+		<property name="isExposedRecursively">
+			<value>false</value>
+		</property>
+		<relationship name="modulators">
+			<destination>{ea2dd2a4-7b1d-4739-9536-70d8a7bf4f66}</destination>
+		</relationship>
+	</object>
+	<object class="SeekModulator" id="{ea2dd2a4-7b1d-4739-9536-70d8a7bf4f66}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>cursorPosition</value>
+		</property>
+		<property name="speedAscending">
+			<value>0.64999997615814209</value>
+		</property>
+	</object>
+</objects>
