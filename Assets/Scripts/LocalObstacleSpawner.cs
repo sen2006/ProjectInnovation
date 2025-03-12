@@ -39,7 +39,7 @@ public class LocalObstacleSpawner : MonoBehaviour
             float distortionValue = Mathf.PingPong(Time.time, 1f); // Simulated slider value
             Debug.Log($"Simulated Audio Distortion: {distortionValue}");
             FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Distortion", distortionValue);
-            //To Do Tycho: Audio Distortion 
+            //TODO: turn distortion off after amount of time
         }
 
         if (Input.GetKey(KeyCode.Alpha2))

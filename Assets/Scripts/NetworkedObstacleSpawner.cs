@@ -72,7 +72,8 @@ public class NetworkedObstacleSpawner : NetworkBehaviour
     {
         // Pseudo-code for audio distortion effect
         Debug.Log($"Audio Distortion Updated: {distortionValue}");
-        // AudioManager.SetDistortionLevel(distortionValue);
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Distortion", distortionValue);
+        //TODO: turn distortion off after amount of time
     }
 
     [ServerRpc(RequireOwnership = false)]
