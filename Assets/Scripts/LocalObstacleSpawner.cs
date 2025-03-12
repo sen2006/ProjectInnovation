@@ -45,7 +45,7 @@ public class LocalObstacleSpawner : MonoBehaviour
         {
             float distortionValue = Mathf.PingPong(Time.time, 1f);
             Debug.Log($"Simulated Camera Distortion: {distortionValue}");
-            cameraEffects.ApplyDistortion(distortionValue);
+            cameraEffects.ApplyDistortion(distortionValue); // This now enables the glitch shader
         }
     }
 
