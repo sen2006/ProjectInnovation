@@ -26,7 +26,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c2e5785b50548fe49a183c5063d51264, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c2e5785b50548fe49a183c5063d51264, type: 3}
       propertyPath: m_LocalPosition.z
@@ -67,7 +67,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: c2e5785b50548fe49a183c5063d51264, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 8ea2d75bae0f7b9448d761b7c4b2c31a, type: 2}
+      objectReference: {fileID: 2100000, guid: feb2423580b44434fa981fd86e05c38b, type: 2}
     - target: {fileID: 919132149155446097, guid: c2e5785b50548fe49a183c5063d51264, type: 3}
       propertyPath: m_Name
       value: Landscape
@@ -86,6 +86,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c2e5785b50548fe49a183c5063d51264, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3875391137817318365}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c2e5785b50548fe49a183c5063d51264, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7762966494346624053}
   m_SourcePrefab: {fileID: 100100000, guid: c2e5785b50548fe49a183c5063d51264, type: 3}
 --- !u!1 &20374658265900780 stripped
 GameObject:
@@ -134,3 +137,15 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.4032235, y: 5.9326086, z: 21.515709}
   m_Center: {x: -5.166668, y: 1.3650907, z: 16.542217}
+--- !u!114 &7762966494346624053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 20374658265900780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e198f8722a9c55540b6ec1ec9a5e2ced, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
