@@ -9,6 +9,7 @@ public class LocalObstacleSpawner : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Transform player;  // The moving player reference
+    [SerializeField] private CameraEffects cameraEffects;
 
     [Header("Spawn Settings")]
     [SerializeField] private float spawnDistanceAhead = 15f;
@@ -30,6 +31,21 @@ public class LocalObstacleSpawner : MonoBehaviour
         {
             Debug.Log("Spawning Moving Block (Standalone Test)");
             SpawnMovingBlock();
+        }
+
+        // Simulating Audio & Camera Distortion Sliders
+        if (Input.GetKey(KeyCode.Alpha1))
+        {
+            float distortionValue = Mathf.PingPong(Time.time, 1f); // Simulated slider value
+            Debug.Log($"Simulated Audio Distortion: {distortionValue}");
+            //To Do Tycho: Audio Distortion 
+        }
+
+        if (Input.GetKey(KeyCode.Alpha2))
+        {
+            float distortionValue = Mathf.PingPong(Time.time, 1f);
+            Debug.Log($"Simulated Camera Distortion: {distortionValue}");
+            cameraEffects.ApplyDistortion(distortionValue);
         }
     }
 

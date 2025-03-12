@@ -1,74 +1,150 @@
-using UnityEngine;
+﻿using UnityEngine;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Jobs;
+using Unity.Mathematics;
+using UnityEngine.Rendering;
 using System.Collections.Generic;
 
 public class GridManager : MonoBehaviour
 {
-    public GameObject prefab;
+    public Mesh mesh;
+    public Material material;
     public int width = 30, height = 30;
     public float spacing = 1.5f, waveSpeed = 2.0f, waveAmplitude = 1.5f;
     public Gradient colorGradient;
 
-    private Transform[,] grid;
-    private float[,] waveOffsets;
-
-    public Transform[,] Grid => grid; // Public getter for ShockwaveAbility
+    private Matrix4x4[] instanceMatrices;
+    private NativeArray<float> waveOffsets;
+    public NativeArray<float3> positions;
+    public NativeArray<Color> colors;
+    public NativeArray<Color> gradientColors;
+    private MaterialPropertyBlock propBlock;
+    private List<Vector4> colorVectors;
 
     void Start()
     {
-        CreateGrid();
+        if (material != null)
+            material.enableInstancing = true;
+
+        PrecomputeGradient();
+        InitializeGrid();
+        AddFloorCollider();
     }
 
     void Update()
     {
-        ApplyWaveEffect();
+        float time = Time.time * waveSpeed;
+
+        ApplyWaveEffectJob waveJob = new ApplyWaveEffectJob
+        {
+            time = time,
+            waveAmplitude = waveAmplitude,
+            waveOffsets = waveOffsets,
+            positions = positions,
+            colors = colors,
+            gradientColors = gradientColors,
+            gradientResolution = gradientColors.Length
+        };
+
+        JobHandle jobHandle = waveJob.Schedule(positions.Length, 64);
+        jobHandle.Complete();
+
+        ApplyRendering();
     }
 
-    void CreateGrid()
+    void InitializeGrid()
     {
-        grid = new Transform[width, height];
-        waveOffsets = new float[width, height];
+        int totalInstances = width * height;
+        instanceMatrices = new Matrix4x4[totalInstances];
+        waveOffsets = new NativeArray<float>(totalInstances, Allocator.Persistent);
+        positions = new NativeArray<float3>(totalInstances, Allocator.Persistent);
+        colors = new NativeArray<Color>(totalInstances, Allocator.Persistent);
+        colorVectors = new List<Vector4>(totalInstances);
+        propBlock = new MaterialPropertyBlock();
 
         Vector3 basePosition = transform.position;
+        int index = 0;
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < height; z++)
             {
-                Vector3 position = basePosition + new Vector3(x * spacing, 0, z * spacing);
-                GameObject obj = Instantiate(prefab, position, Quaternion.identity, transform);
-                grid[x, z] = obj.transform;
-                waveOffsets[x, z] = Random.Range(0f, Mathf.PI * 2);
-
-                Renderer rend = obj.GetComponent<Renderer>();
-                if (rend != null) rend.material = new Material(rend.material);
-
-                Destroy(obj.GetComponent<BoxCollider>()); // Remove BoxCollider if present
+                positions[index] = new float3(x * spacing, 0, z * spacing) + (float3)basePosition;
+                waveOffsets[index] = UnityEngine.Random.Range(0f, Mathf.PI * 2);
+                colors[index] = Color.white;
+                index++;
             }
         }
-        AddFloorCollider();
+    }
+
+    public void ApplyRendering()
+    {
+        colorVectors.Clear();
+        for (int i = 0; i < positions.Length; i++)
+        {
+            instanceMatrices[i] = Matrix4x4.TRS(positions[i], Quaternion.identity, Vector3.one);
+
+            // ✅ Convert Color to Vector4 and store per-instance color
+            colorVectors.Add(new Vector4(colors[i].r, colors[i].g, colors[i].b, colors[i].a));
+        }
+
+        propBlock.SetVectorArray("_BaseColor", colorVectors);
+        Graphics.DrawMeshInstanced(mesh, 0, material, instanceMatrices, instanceMatrices.Length, propBlock);
     }
 
     void AddFloorCollider()
     {
         BoxCollider box = gameObject.AddComponent<BoxCollider>();
-        box.center = new Vector3((width - 1) * spacing / 2, 3.5f, (height - 1) * spacing / 2);
+        box.center = new Vector3((width - 1) * spacing / 2, 0, (height - 1) * spacing / 2);
         box.size = new Vector3(width * spacing, 1f, height * spacing);
     }
 
-    void ApplyWaveEffect()
+    // ✅ Precompute Gradient (with Linear Color Correction)
+    void PrecomputeGradient()
     {
-        float time = Time.time * waveSpeed;
-        for (int x = 0; x < width; x++)
+        int gradientResolution = 256;
+        gradientColors = new NativeArray<Color>(gradientResolution, Allocator.Persistent);
+        for (int i = 0; i < gradientResolution; i++)
         {
-            for (int z = 0; z < height; z++)
-            {
-                Transform obj = grid[x, z];
-                float waveHeight = Mathf.Sin(time + waveOffsets[x, z]) * waveAmplitude;
-                obj.position = new Vector3(obj.position.x, waveHeight, obj.position.z);
-
-                float normalizedHeight = Mathf.InverseLerp(-waveAmplitude, waveAmplitude, waveHeight);
-                obj.GetComponent<Renderer>().material.color = colorGradient.Evaluate(normalizedHeight);
-            }
+            float t = i / (float)(gradientResolution - 1);
+            gradientColors[i] = colorGradient.Evaluate(t).linear; // ✅ Ensures proper gradient mapping
         }
     }
+
+    [BurstCompile]
+    struct ApplyWaveEffectJob : IJobParallelFor
+    {
+        public float time;
+        public float waveAmplitude;
+        public int gradientResolution;
+
+        [ReadOnly] public NativeArray<float> waveOffsets;
+        public NativeArray<float3> positions;
+        public NativeArray<Color> colors;
+        [ReadOnly] public NativeArray<Color> gradientColors;
+
+        public void Execute(int index)
+        {
+            float waveHeight = Mathf.Sin(time + waveOffsets[index]) * waveAmplitude;
+            float3 pos = positions[index];
+            pos.y = waveHeight;
+            positions[index] = pos;
+
+            float normalizedHeight = Mathf.InverseLerp(-waveAmplitude, waveAmplitude, waveHeight);
+            int colorIndex = Mathf.Clamp(Mathf.RoundToInt(normalizedHeight * (gradientResolution - 1)), 0, gradientResolution - 1);
+            colors[index] = gradientColors[colorIndex];
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (waveOffsets.IsCreated) waveOffsets.Dispose();
+        if (positions.IsCreated) positions.Dispose();
+        if (colors.IsCreated) colors.Dispose();
+        if (gradientColors.IsCreated) gradientColors.Dispose();
+    }
 }
+
+
+
 
