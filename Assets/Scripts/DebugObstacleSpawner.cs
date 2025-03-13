@@ -23,7 +23,7 @@ public class DebugObstacleSpawner : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.M))
         {
             Debug.Log("Spawning Moving Block (Test Mode)");
-            obstacleSpawner.SpawnMovingBlockServerRpc();
+            //obstacleSpawner.SpawnMovingBlockServerRpc();
         }
     }
 }
