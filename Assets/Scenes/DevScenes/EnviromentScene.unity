@@ -1392,10 +1392,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9df2b40c4997544ab3813488c951b9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shockwaveSpeed: 7
-  shockwaveMaxRadius: 50
+  shockwaveSpeed: 8
+  shockwaveMaxRadius: 10
   heightMultiplier: 5
-  shockwaveDuration: 0.4
+  shockwaveDuration: 0.5
   shockwaveGradient:
     serializedVersion: 2
     key0: {r: 1, g: 0.6784314, b: 0.6784314, a: 1}

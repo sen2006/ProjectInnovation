@@ -21,7 +21,8 @@ public class UIManager : MonoBehaviour
 
     private void AutoToggleUI()
     {
-        if (gameManager.connectionState != GameManager.ConnectionState.Connected || !enableAutoUIToggling)
+        if (!enableAutoUIToggling) return;
+        if (gameManager.connectionState != GameManager.ConnectionState.Connected)
         {
             PcUI.SetActive(false);
             MobileUI.SetActive(false);
