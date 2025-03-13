@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,15 +13,25 @@ public class PhaseAbility : MonoBehaviour
     [SerializeField] private Material normalWallMaterial;
     [SerializeField] private Material glitchWallMaterial;
 
-    [Header("UI Elements")]
-    [SerializeField] private Image cooldownImage; // Assign this in the Inspector
+    [Header("UI & Effects")]
+    [SerializeField] private Image cooldownImage; // Assign in Inspector
+    [SerializeField] private Image phaseOverlay; // Flash effect (assign in Inspector)
+    [SerializeField] private AudioSource phaseSound; // Assign an AudioSource with a phase sound
+    [SerializeField] private Transform cameraTransform; // Assign Main Camera for shake effect
 
     private bool canUseAbility = true;
+    private Vector3 originalCamPosition;
 
     private void Start()
     {
         if (cooldownImage != null)
             cooldownImage.fillAmount = 1f; // Start as fully ready
+
+        if (phaseOverlay != null)
+            phaseOverlay.enabled = false; // Hide overlay initially
+
+        if (cameraTransform != null)
+            originalCamPosition = cameraTransform.localPosition;
     }
 
     private void Update()
@@ -37,6 +47,10 @@ public class PhaseAbility : MonoBehaviour
         cooldownImage.fillAmount = 0;
         canUseAbility = false;
         Debug.Log("Phase Ability Activated!");
+
+        if (phaseSound != null) phaseSound.Play(); // Play sound effect
+        if (phaseOverlay != null) StartCoroutine(FlashOverlay()); // Flash UI overlay
+        if (cameraTransform != null) StartCoroutine(CameraShake(0.15f, 0.1f)); // Shake camera
 
         SetWallsTriggerState(true);
         ApplyWallGlitch(true);
@@ -92,5 +106,36 @@ public class PhaseAbility : MonoBehaviour
                 renderer.material = enableGlitch ? glitchWallMaterial : normalWallMaterial;
             }
         }
+    }
+
+    // 🔹 UI Flash Effect
+    private IEnumerator FlashOverlay()
+    {
+        phaseOverlay.enabled = true;
+        phaseOverlay.color = new Color(1, 1, 1, 0.3f); // Semi-transparent white
+
+        float fadeTime = 0.5f;
+        float elapsed = 0f;
+        while (elapsed < fadeTime)
+        {
+            elapsed += Time.deltaTime;
+            phaseOverlay.color = new Color(1, 1, 1, Mathf.Lerp(0.3f, 0f, elapsed / fadeTime));
+            yield return null;
+        }
+        phaseOverlay.enabled = false;
+    }
+
+    // 🔹 Camera Shake Effect
+    private IEnumerator CameraShake(float duration, float magnitude)
+    {
+        float elapsed = 0.0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            Vector3 randomOffset = Random.insideUnitSphere * magnitude;
+            cameraTransform.localPosition = originalCamPosition + randomOffset;
+            yield return null;
+        }
+        cameraTransform.localPosition = originalCamPosition; // Reset position
     }
 }

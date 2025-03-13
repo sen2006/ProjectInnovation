@@ -6,11 +6,18 @@ public class PlayerDeath : MonoBehaviour
     [Header("Death Settings")]
     [SerializeField] private string deathTag = "PhaseableWall"; // What kills the player
     [SerializeField] private float deathYThreshold = -10f; // Y-level for falling off
+    [SerializeField] private float minVelocityThreshold = 0.1f; // Min velocity before dying
 
     [Header("UI Elements")]
     [SerializeField] private GameObject deathScreen; // Assign in the Inspector
 
     private bool isDead = false;
+    private Rigidbody rb;
+
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
     private void Update()
     {
@@ -21,10 +28,18 @@ public class PlayerDeath : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.CompareTag(deathTag) && !isDead)
+        // Check for a normal collision with the wall
+        if (collision.gameObject.CompareTag(deathTag) && !isDead)
         {
+            Die();
+        }
+
+        // Check if player stops moving
+        if (rb.velocity.magnitude < minVelocityThreshold && !isDead)
+        {
+            Debug.Log("Player velocity too low! Died.");
             Die();
         }
     }

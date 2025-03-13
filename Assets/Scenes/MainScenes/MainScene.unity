@@ -159,6 +159,7 @@ MonoBehaviour:
   shockwaveMaxRadius: 10
   heightMultiplier: 1.4
   shockwaveDuration: 0.4
+  shockwaveFadeDuration: 1
   shockwaveGradient:
     serializedVersion: 2
     key0: {r: 1, g: 0.6784314, b: 0.6784314, a: 1}
@@ -2715,6 +2716,81 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71888bd61040c454c9c3da6eb8858a71, type: 3}
+--- !u!1 &1280565028
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1280565029}
+  - component: {fileID: 1280565031}
+  - component: {fileID: 1280565030}
+  m_Layer: 5
+  m_Name: Phase Overlay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1280565029
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280565028}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1541434283}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -0.000030518, y: -0.00074768}
+  m_SizeDelta: {x: 800, y: 449.9}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1280565030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280565028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1280565031
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280565028}
+  m_CullTransparentMesh: 1
 --- !u!4 &1306473862 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 793673708235111510, guid: 71888bd61040c454c9c3da6eb8858a71, type: 3}
@@ -3157,6 +3233,10 @@ PrefabInstance:
       propertyPath: invertWorldButton
       value: 
       objectReference: {fileID: 305097068}
+    - target: {fileID: 7733988577140694569, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -3219,6 +3299,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3664529732209482930, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
       insertIndex: -1
       addedObject: {fileID: 136655854}
+    - targetCorrespondingSourceObject: {fileID: 3664529732209482930, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1280565029}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1908479500066514890, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
       insertIndex: 1
@@ -4029,6 +4112,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 868079518}
     m_Modifications:
+    - target: {fileID: 350886803544644558, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 350886803544644558, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+      propertyPath: BypassListenerEffects
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 398344970839597382, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4081,6 +4172,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5324179419526296854, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+      propertyPath: phaseOverlay
+      value: 
+      objectReference: {fileID: 1280565030}
     - target: {fileID: 5324179419526296854, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
       propertyPath: cooldownImage
       value: 

@@ -71,6 +71,8 @@ public class Movement : MonoBehaviour
     private bool canWallRun = true;
     private bool shouldSlide = false;
 
+    private bool connectionEstablished = false; // Track if connected or override active
+
     // Control Delay Time
     [SerializeField] private float delayTime;
 
@@ -94,6 +96,16 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
+        // Check if connection is established or if Delete key was pressed for manual override
+        if (GameManager.ConnectionSuccess() || Input.GetKeyDown(KeyCode.Delete))
+        {
+            connectionEstablished = true;
+            Debug.Log("Connection Established (or manually overridden)");
+        }
+
+        // Disable movement if connection isn't active and no manual override
+        if (!connectionEstablished) return;
+
         ApplyGravity();
         MoveForward();
         InputHandler();
@@ -262,7 +274,7 @@ public class Movement : MonoBehaviour
             col.center = new Vector3(0, -col.height / 2, 0);
             cameraTransform.GetComponent<CameraEffects>().ApplySlideEffect(0.7f, true); // Move down & tilt BACKWARD
 
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, moveSpeed * 1.5f); // Temporary speed boost
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, moveSpeed);
         }
         else
         {

@@ -700,6 +700,81 @@ MonoBehaviour:
   movingBlockOffsetX: 2
   spawnHeight: 5
   distortionCooldownDuration: 5
+--- !u!1 &592937586
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 592937587}
+  - component: {fileID: 592937589}
+  - component: {fileID: 592937588}
+  m_Layer: 5
+  m_Name: Phase Overlay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &592937587
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 592937586}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1292072976}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1547, y: 870}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &592937588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 592937586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &592937589
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 592937586}
+  m_CullTransparentMesh: 1
 --- !u!1001 &594104552
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1880,6 +1955,7 @@ RectTransform:
   m_Children:
   - {fileID: 1903743097}
   - {fileID: 1591118387}
+  - {fileID: 592937587}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2029,6 +2105,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 848814740}
     m_Modifications:
+    - target: {fileID: 350886803544644558, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+      propertyPath: Mute
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 350886803544644558, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+      propertyPath: BypassEffects
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 350886803544644558, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 350886803544644558, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+      propertyPath: BypassReverbZones
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 350886803544644558, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+      propertyPath: BypassListenerEffects
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 398344970839597382, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2086,6 +2182,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1591118386}
     - target: {fileID: 5324179419526296854, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+      propertyPath: phaseOverlay
+      value: 
+      objectReference: {fileID: 592937588}
+    - target: {fileID: 5324179419526296854, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
       propertyPath: cooldownImage
       value: 
       objectReference: {fileID: 1920243607}
@@ -2135,6 +2235,7 @@ MonoBehaviour:
   shockwaveMaxRadius: 10
   heightMultiplier: 1.4
   shockwaveDuration: 0.4
+  shockwaveFadeDuration: 1
   shockwaveGradient:
     serializedVersion: 2
     key0: {r: 1, g: 0.6784314, b: 0.6784314, a: 1}
