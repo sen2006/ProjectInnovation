@@ -7,13 +7,13 @@ using System.Collections.Generic;
 public class ShockwaveAbility : MonoBehaviour
 {
     public float shockwaveSpeed = 8.0f, shockwaveMaxRadius = 10.0f, heightMultiplier = 3.0f;
-    public float shockwaveDuration = 0.5f;
+    public float shockwaveDuration = 0.5f, shockwaveFadeDuration = 1.0f;
     public Gradient shockwaveGradient;
+    private NativeArray<Color> shockwaveGradientColors;
 
     private List<GridManager> gridManagers = new List<GridManager>();
     private List<Shockwave> activeShockwaves = new List<Shockwave>();
-    private NativeArray<bool> affectedCubes; // Track affected cubes using NativeArray
-    private NativeArray<Color> shockwaveGradientColors; // Store shockwave colors
+    private NativeArray<bool> affectedCubes;
 
     void Start()
     {
@@ -23,9 +23,10 @@ public class ShockwaveAbility : MonoBehaviour
             Debug.LogError("No GridManager instances found!");
         }
 
-        // ✅ Initialize affectedCubes to track cube states
         int totalInstances = gridManagers.Count > 0 ? gridManagers[0].positions.Length : 0;
         affectedCubes = new NativeArray<bool>(totalInstances, Allocator.Persistent);
+
+        PrecomputeShockwaveGradient();
     }
 
     void Update()
@@ -43,6 +44,17 @@ public class ShockwaveAbility : MonoBehaviour
         }
     }
 
+    void PrecomputeShockwaveGradient()
+    {
+        int gradientResolution = 256;
+        shockwaveGradientColors = new NativeArray<Color>(gradientResolution, Allocator.Persistent);
+        for (int i = 0; i < gradientResolution; i++)
+        {
+            float t = i / (float)(gradientResolution - 1);
+            shockwaveGradientColors[i] = shockwaveGradient.Evaluate(t).linear;
+        }
+    }
+
     public void AddShockwave(Vector3 origin)
     {
         activeShockwaves.Add(new Shockwave(origin, Time.time));
@@ -57,27 +69,39 @@ public class ShockwaveAbility : MonoBehaviour
             Shockwave wave = activeShockwaves[i];
             float elapsedTime = currentTime - wave.startTime;
             float radius = elapsedTime * shockwaveSpeed;
+            float fadeProgress = 0f;
 
             if (radius > shockwaveMaxRadius)
             {
-                activeShockwaves.RemoveAt(i);
-                continue;
+                if (!wave.isFading)
+                {
+                    wave.isFading = true;
+                    wave.fadeStartTime = currentTime;
+                }
+
+                float fadeElapsed = currentTime - wave.fadeStartTime;
+                fadeProgress = math.saturate(fadeElapsed / shockwaveFadeDuration);
+
+                if (fadeProgress >= 1f)
+                {
+                    activeShockwaves.RemoveAt(i);
+                    continue;
+                }
             }
 
             foreach (GridManager gridManager in gridManagers)
             {
-                ApplyShockwaveEffect(gridManager, wave.origin, radius);
+                ApplyShockwaveEffect(gridManager, wave.origin, radius, fadeProgress);
             }
         }
 
-        // ✅ Ensure all previously affected cubes continue shrinking
         foreach (GridManager gridManager in gridManagers)
         {
             ApplyShrinkEffect(gridManager);
         }
     }
 
-    void ApplyShockwaveEffect(GridManager gridManager, Vector3 waveOrigin, float radius)
+    void ApplyShockwaveEffect(GridManager gridManager, Vector3 waveOrigin, float radius, float fadeProgress)
     {
         if (!gridManager.positions.IsCreated || !gridManager.colors.IsCreated || !gridManager.scales.IsCreated) return;
 
@@ -88,12 +112,13 @@ public class ShockwaveAbility : MonoBehaviour
             heightMultiplier = heightMultiplier,
             animationSpeed = 0.1f,
             shrinkSpeed = 0.05f,
+            fadeProgress = fadeProgress,
             colors = gridManager.colors,
             positions = gridManager.positions,
             scales = gridManager.scales,
-            gradientColors = gridManager.gradientColors,
-            gradientResolution = gridManager.gradientColors.Length,
-            affectedCubes = affectedCubes // ✅ Track affected cubes
+            gradientColors = shockwaveGradientColors,  // ✅ Use the shockwave gradient
+            gradientResolution = shockwaveGradientColors.Length,
+            affectedCubes = affectedCubes
         };
 
         JobHandle jobHandle = shockwaveJob.Schedule(gridManager.positions.Length, 64);
@@ -110,7 +135,7 @@ public class ShockwaveAbility : MonoBehaviour
         {
             scales = gridManager.scales,
             shrinkSpeed = 0.02f,
-            affectedCubes = affectedCubes // ✅ Use NativeArray<bool> for tracking
+            affectedCubes = affectedCubes
         };
 
         JobHandle jobHandle = shrinkJob.Schedule(gridManager.positions.Length, 64);
@@ -123,7 +148,16 @@ public class ShockwaveAbility : MonoBehaviour
     {
         public Vector3 origin;
         public float startTime;
-        public Shockwave(Vector3 origin, float startTime) { this.origin = origin; this.startTime = startTime; }
+        public float fadeStartTime;
+        public bool isFading;
+
+        public Shockwave(Vector3 origin, float startTime)
+        {
+            this.origin = origin;
+            this.startTime = startTime;
+            this.fadeStartTime = 0f;
+            this.isFading = false;
+        }
     }
 
     struct ApplyShockwaveJob : IJobParallelFor
@@ -133,13 +167,14 @@ public class ShockwaveAbility : MonoBehaviour
         public float heightMultiplier;
         public float animationSpeed;
         public float shrinkSpeed;
+        public float fadeProgress;
         public int gradientResolution;
 
         [ReadOnly] public NativeArray<float3> positions;
         public NativeArray<float3> scales;
         public NativeArray<Color> colors;
         [ReadOnly] public NativeArray<Color> gradientColors;
-        public NativeArray<bool> affectedCubes; // ✅ Track affected cubes safely
+        public NativeArray<bool> affectedCubes;
 
         public void Execute(int index)
         {
@@ -153,15 +188,15 @@ public class ShockwaveAbility : MonoBehaviour
 
             if (distance * distance < radiusSqr && distance * distance > innerRadiusSqr)
             {
-                targetScaleY = heightMultiplier;
-                affectedCubes[index] = true; // ✅ Mark cube as affected
+                targetScaleY = heightMultiplier * (1f - fadeProgress);
+                affectedCubes[index] = true;
 
-                // ✅ Correctly normalize distance to range [0, 1]
+                // ✅ Map the distance to the gradient colors
                 float gradientPos = math.saturate((distance - (radius - 2.5f)) / 2.5f);
                 int gradientIndex = (int)(gradientPos * (gradientResolution - 1));
                 gradientIndex = math.clamp(gradientIndex, 0, gradientResolution - 1);
 
-                colors[index] = gradientColors[gradientIndex];
+                colors[index] = gradientColors[gradientIndex];  // ✅ Apply the gradient color
             }
 
             float lerpSpeed = targetScaleY > currentScale.y ? animationSpeed : shrinkSpeed;
@@ -175,7 +210,7 @@ public class ShockwaveAbility : MonoBehaviour
     {
         public NativeArray<float3> scales;
         public float shrinkSpeed;
-        public NativeArray<bool> affectedCubes; // ✅ Track affected cubes safely
+        public NativeArray<bool> affectedCubes;
 
         public void Execute(int index)
         {
@@ -187,7 +222,7 @@ public class ShockwaveAbility : MonoBehaviour
             if (math.abs(newScaleY - 1f) < 0.01f)
             {
                 newScaleY = 1f;
-                affectedCubes[index] = false; // ✅ Reset when fully shrunk
+                affectedCubes[index] = false;
             }
 
             scales[index] = new float3(currentScale.x, newScaleY, currentScale.z);
@@ -196,9 +231,14 @@ public class ShockwaveAbility : MonoBehaviour
 
     void OnDestroy()
     {
+        if (shockwaveGradientColors.IsCreated) shockwaveGradientColors.Dispose();
         if (affectedCubes.IsCreated) affectedCubes.Dispose();
     }
 }
+
+
+
+
 
 
 
