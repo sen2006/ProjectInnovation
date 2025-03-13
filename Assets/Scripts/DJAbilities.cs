@@ -60,12 +60,12 @@ public class DJAbilities : NetworkBehaviour
     {
         await UnityServices.InitializeAsync();
 
-        bassSlamButton.onClick.AddListener(BassSlamRpc);
-        glitchStormButton.onClick.AddListener(GlitchStormRpc);
-        controlLagButton.onClick.AddListener(ControlLagRpc);
-        invertWorldButton.onClick.AddListener(InvertWorldRpc);
-        spawnWallObjectButton.onClick.AddListener(SpawnBarrierWallServerRpc);
-        movingBlockButton.onClick.AddListener(SpawnMovingBlockRpc);
+        bassSlamButton?.onClick.AddListener(BassSlamRpc);
+        glitchStormButton?.onClick.AddListener(GlitchStormRpc);
+        controlLagButton?.onClick.AddListener(ControlLagRpc);
+        invertWorldButton?.onClick.AddListener(InvertWorldRpc);
+        spawnWallObjectButton?.onClick.AddListener(SpawnBarrierWallServerRpc);
+        movingBlockButton?.onClick.AddListener(SpawnMovingBlockRpc);
     }
 
     [Rpc(SendTo.Server)]
