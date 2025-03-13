@@ -265,6 +265,8 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 8
     m_NumAlphaKeys: 2
+  capsulePrefab: {fileID: 0}
+  player: {fileID: 0}
 --- !u!114 &61710563 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1211000506117771739, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
@@ -1570,7 +1572,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1170294418798492703, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
   m_PrefabInstance: {fileID: 2031123538}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2031123539}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 04bd650daf2528f4c8189e29d096f1d2, type: 3}
@@ -2761,6 +2763,138 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2031123539}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: capsulePrefab
+      value: 
+      objectReference: {fileID: 5330993877907605342, guid: 540bdf3546f6ed249bd77e749ea7e08c, type: 3}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: heightMultiplier
+      value: 4.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.ctime1
+      value: 8674
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.ctime2
+      value: 17733
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.ctime3
+      value: 27756
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.ctime4
+      value: 36815
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.ctime5
+      value: 46067
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.ctime6
+      value: 55512
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.ctime7
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key0.b
+      value: 0.6784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key0.g
+      value: 0.6784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key1.b
+      value: 0.64705884
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key1.g
+      value: 0.8392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key2.b
+      value: 0.7129246
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key2.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key2.r
+      value: 0.99215686
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key3.b
+      value: 0.7490196
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key3.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key3.r
+      value: 0.7921569
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key4.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key4.g
+      value: 0.9647059
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key4.r
+      value: 0.60784316
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key5.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key5.g
+      value: 0.76862746
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key5.r
+      value: 0.627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key6.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key6.g
+      value: 0.69803923
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key6.r
+      value: 0.7411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key7.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key7.g
+      value: 0.7764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.key7.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784566039940027292, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: shockwaveGradient.m_NumColorKeys
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 8201505299463175140, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3841,6 +3975,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 61710561}
   m_SourcePrefab: {fileID: 100100000, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+--- !u!1 &2031123539 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9191532357592237585, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+  m_PrefabInstance: {fileID: 2031123538}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2108237819 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 793673708235111510, guid: 71888bd61040c454c9c3da6eb8858a71, type: 3}

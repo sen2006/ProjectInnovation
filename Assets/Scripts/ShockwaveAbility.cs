@@ -3,17 +3,22 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using System.Collections.Generic;
+using Unity.Burst;
 
 public class ShockwaveAbility : MonoBehaviour
 {
     public float shockwaveSpeed = 8.0f, shockwaveMaxRadius = 10.0f, heightMultiplier = 3.0f;
     public float shockwaveDuration = 0.5f, shockwaveFadeDuration = 1.0f;
     public Gradient shockwaveGradient;
-    private NativeArray<Color> shockwaveGradientColors;
+    public GameObject capsulePrefab; // Capsule prefab for visualization
+    public GameObject player; // Reference to the player
 
+    private NativeArray<Color> shockwaveGradientColors;
     private List<GridManager> gridManagers = new List<GridManager>();
     private List<Shockwave> activeShockwaves = new List<Shockwave>();
     private NativeArray<bool> affectedCubes;
+
+    private ShockwaveCapsuleManager capsuleManager;
 
     void Start()
     {
@@ -27,6 +32,9 @@ public class ShockwaveAbility : MonoBehaviour
         affectedCubes = new NativeArray<bool>(totalInstances, Allocator.Persistent);
 
         PrecomputeShockwaveGradient();
+
+        // Initialize Capsule Manager
+        capsuleManager = new ShockwaveCapsuleManager(capsulePrefab, player);
     }
 
     void Update()
@@ -40,7 +48,9 @@ public class ShockwaveAbility : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            activeShockwaves.Add(new Shockwave(hit.point, Time.time));
+            Shockwave newWave = new Shockwave(hit.point, Time.time);
+            newWave.capsule = capsuleManager.CreateTravelingCapsule(hit.point); // Assign the capsule
+            activeShockwaves.Add(newWave);
         }
     }
 
@@ -53,11 +63,6 @@ public class ShockwaveAbility : MonoBehaviour
             float t = i / (float)(gradientResolution - 1);
             shockwaveGradientColors[i] = shockwaveGradient.Evaluate(t).linear;
         }
-    }
-
-    public void AddShockwave(Vector3 origin)
-    {
-        activeShockwaves.Add(new Shockwave(origin, Time.time));
     }
 
     void UpdateShockwaves()
@@ -84,6 +89,7 @@ public class ShockwaveAbility : MonoBehaviour
 
                 if (fadeProgress >= 1f)
                 {
+                    capsuleManager.DestroyCapsule(wave.capsule); // Destroy the capsule
                     activeShockwaves.RemoveAt(i);
                     continue;
                 }
@@ -93,6 +99,8 @@ public class ShockwaveAbility : MonoBehaviour
             {
                 ApplyShockwaveEffect(gridManager, wave.origin, radius, fadeProgress);
             }
+
+            capsuleManager.UpdateCapsulePosition(wave.capsule, wave.origin, radius);
         }
 
         foreach (GridManager gridManager in gridManagers)
@@ -116,7 +124,7 @@ public class ShockwaveAbility : MonoBehaviour
             colors = gridManager.colors,
             positions = gridManager.positions,
             scales = gridManager.scales,
-            gradientColors = shockwaveGradientColors,  // ✅ Use the shockwave gradient
+            gradientColors = shockwaveGradientColors,
             gradientResolution = shockwaveGradientColors.Length,
             affectedCubes = affectedCubes
         };
@@ -144,22 +152,8 @@ public class ShockwaveAbility : MonoBehaviour
         gridManager.ApplyRendering();
     }
 
-    public class Shockwave
-    {
-        public Vector3 origin;
-        public float startTime;
-        public float fadeStartTime;
-        public bool isFading;
-
-        public Shockwave(Vector3 origin, float startTime)
-        {
-            this.origin = origin;
-            this.startTime = startTime;
-            this.fadeStartTime = 0f;
-            this.isFading = false;
-        }
-    }
-
+    // Job to apply shockwave effects
+    [BurstCompile]
     struct ApplyShockwaveJob : IJobParallelFor
     {
         public Vector3 waveOrigin;
@@ -191,12 +185,12 @@ public class ShockwaveAbility : MonoBehaviour
                 targetScaleY = heightMultiplier * (1f - fadeProgress);
                 affectedCubes[index] = true;
 
-                // ✅ Map the distance to the gradient colors
+                // Map the distance to the gradient colors
                 float gradientPos = math.saturate((distance - (radius - 2.5f)) / 2.5f);
                 int gradientIndex = (int)(gradientPos * (gradientResolution - 1));
                 gradientIndex = math.clamp(gradientIndex, 0, gradientResolution - 1);
 
-                colors[index] = gradientColors[gradientIndex];  // ✅ Apply the gradient color
+                colors[index] = gradientColors[gradientIndex];  // Apply the gradient color
             }
 
             float lerpSpeed = targetScaleY > currentScale.y ? animationSpeed : shrinkSpeed;
@@ -206,6 +200,8 @@ public class ShockwaveAbility : MonoBehaviour
         }
     }
 
+    // Job to apply shrinking effect
+    [BurstCompile]
     struct ApplyShrinkJob : IJobParallelFor
     {
         public NativeArray<float3> scales;
@@ -229,12 +225,31 @@ public class ShockwaveAbility : MonoBehaviour
         }
     }
 
+    public class Shockwave
+    {
+        public Vector3 origin;
+        public float startTime;
+        public float fadeStartTime;
+        public bool isFading;
+        public GameObject capsule; // Store reference to the traveling capsule
+
+        public Shockwave(Vector3 origin, float startTime)
+        {
+            this.origin = origin;
+            this.startTime = startTime;
+            this.fadeStartTime = 0f;
+            this.isFading = false;
+            this.capsule = null;
+        }
+    }
+
     void OnDestroy()
     {
         if (shockwaveGradientColors.IsCreated) shockwaveGradientColors.Dispose();
         if (affectedCubes.IsCreated) affectedCubes.Dispose();
     }
 }
+
 
 
 
