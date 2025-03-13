@@ -38,7 +38,7 @@ public class ShockwaveCapsuleManager
         Vector3 directionToPlayer = (player.transform.position - origin).normalized;
         Vector3 newCapsulePos = origin + directionToPlayer * radius;
 
-        newCapsulePos.y = Mathf.Clamp(newCapsulePos.y, 1.0f, 3.0f); // Limit height
+        newCapsulePos.y = Mathf.Clamp(newCapsulePos.y, 1.0f, 1.0f); // Limit height
 
         capsule.transform.position = newCapsulePos;
         capsule.transform.LookAt(player.transform.position); // Make it face the player
