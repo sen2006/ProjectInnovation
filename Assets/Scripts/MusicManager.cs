@@ -8,6 +8,10 @@ public class MusicManager : MonoBehaviour
 {
     public static MusicManager me;
 
+    [SerializeField] GameManager gameManager;
+    private bool connectionEstablished = false; // Track if connected or override active
+    private bool musicStarted = false;
+
     [SerializeField]
     public FMODUnity.EventReference music;
 
@@ -36,7 +40,7 @@ public class MusicManager : MonoBehaviour
         me = this;
 
         musicPlayEvent = RuntimeManager.CreateInstance(music);
-        musicPlayEvent.start();
+        //musicPlayEvent.start();
     }
 
     private void Start()
@@ -56,6 +60,31 @@ public class MusicManager : MonoBehaviour
 
     private void Update()
     {
+        // Check if GameManager exists
+        if (gameManager == null || Input.GetKeyDown(KeyCode.Delete))
+        {
+            // No GameManager? Allow movement by default
+            connectionEstablished = true;
+            Debug.Log("GameManager is null. Free play enabled.");
+        }
+        else
+        {
+            // GameManager exists? Wait for connection
+            if (gameManager.ConnectionSuccess())
+            {
+                connectionEstablished = true;
+                Debug.Log("Connection Established.");
+            }
+        }
+
+        if (!connectionEstablished) return;
+
+        if (!musicStarted)
+        {
+            musicPlayEvent.start();
+            musicStarted = true;
+        }
+
         musicPlayEvent.getTimelinePosition(out timelineInfo.currentPosition);
     }
 
