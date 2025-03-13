@@ -944,7 +944,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3636396930432209654}
-  - component: {fileID: 3910186638685605837}
+  - component: {fileID: 9083486839172315560}
   - component: {fileID: 6021293180825893531}
   - component: {fileID: 4236535270941682793}
   m_Layer: 0
@@ -969,7 +969,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8201505299463175140}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3910186638685605837
+--- !u!114 &9083486839172315560
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -981,8 +981,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 387040200
-  InScenePlacedSourceGlobalObjectIdHash: 408587974
+  GlobalObjectIdHash: 2957820234
+  InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
@@ -1071,10 +1071,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  bassSlamButton: {fileID: 0}
-  glitchStormButton: {fileID: 0}
-  controlLagButton: {fileID: 0}
-  invertWorldButton: {fileID: 0}
+  bassSlamButton: {fileID: 6963401206629636529}
+  glitchStormButton: {fileID: 976577344459039701}
+  controlLagButton: {fileID: 600124578071306425}
+  invertWorldButton: {fileID: 4526670975758402004}
   shockwaveAbility: {fileID: 7784566039940027292}
   stormDurationMS: 0
   controlLagDurationMS: 0
@@ -1089,7 +1089,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2016871424487730178}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9df2b40c4997544ab3813488c951b9c, type: 3}
   m_Name: 
@@ -2291,7 +2291,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 95037050036914150}
-  - component: {fileID: 623718420779022653}
+  - component: {fileID: 8866150228370077916}
   m_Layer: 0
   m_Name: Networking
   m_TagString: Untagged
@@ -2314,7 +2314,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8201505299463175140}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &623718420779022653
+--- !u!114 &8866150228370077916
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2326,8 +2326,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 412506329
-  InScenePlacedSourceGlobalObjectIdHash: 408587974
+  GlobalObjectIdHash: 2012444197
+  InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0

@@ -115,7 +115,7 @@ public class DJAbilities : NetworkBehaviour
 
     // ---- 
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server)]
     public void SpawnBarrierWallServerRpc()
     {
         if (!canSpawnBarrier) return;
@@ -128,7 +128,7 @@ public class DJAbilities : NetworkBehaviour
         StartCoroutine(ResetBarrierCooldown());
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server)]
     public void SpawnMovingBlockRpc()
     {
         if (!canSpawnMovingBlock) return;
@@ -155,7 +155,7 @@ public class DJAbilities : NetworkBehaviour
 
     // **🔹 Synchronize Power-up Effects**
     [Rpc(SendTo.Server)]
-    private void PickupAudioDistortionPowerupServerRpc()
+    public void PickupAudioDistortionPowerupRpc()
     {
         UpdateAudioDistortionClientRpc(0f);
         canChangeAudioDistortion = false;
@@ -163,7 +163,7 @@ public class DJAbilities : NetworkBehaviour
     }
 
     [Rpc(SendTo.Server)]
-    private void PickupCameraDistortionPowerupServerRpc()
+    public void PickupCameraDistortionPowerupRpc()
     {
         UpdateCameraDistortionClientRpc(0f);
         canChangeCameraDistortion = false;
