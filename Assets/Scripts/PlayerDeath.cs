@@ -37,7 +37,7 @@ public class PlayerDeath : MonoBehaviour
         }
 
         // Check if player stops moving
-        if (rb.velocity.magnitude < minVelocityThreshold && !isDead)
+        if (rb.linearVelocity.magnitude < minVelocityThreshold && !isDead)
         {
             Debug.Log("Player velocity too low! Died.");
             Die();

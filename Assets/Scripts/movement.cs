@@ -59,6 +59,7 @@ public class Movement : MonoBehaviour
     // References
     [Header("References")]
     [SerializeField] Transform cameraTransform;
+    [SerializeField] GameManager gameManager;
 
     // Internal State
     private float colliderHeight;
@@ -97,7 +98,7 @@ public class Movement : MonoBehaviour
     void Update()
     {
         // Check if connection is established or if Delete key was pressed for manual override
-        if (GameManager.ConnectionSuccess() || Input.GetKeyDown(KeyCode.Delete))
+        if (gameManager.ConnectionSuccess() || Input.GetKeyDown(KeyCode.Delete))
         {
             connectionEstablished = true;
             Debug.Log("Connection Established (or manually overridden)");
