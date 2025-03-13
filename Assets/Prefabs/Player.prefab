@@ -342,6 +342,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   cameraTransform: {fileID: 4113583914823498141}
+  gameManager: {fileID: 0}
   delayTime: 0
 --- !u!114 &5324179419526296854
 MonoBehaviour:
@@ -378,6 +379,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deathTag: PhaseableWall
   deathYThreshold: -10
+  minVelocityThreshold: 0.1
+  gracePeriod: 5
   deathScreen: {fileID: 0}
 --- !u!82 &350886803544644558
 AudioSource:

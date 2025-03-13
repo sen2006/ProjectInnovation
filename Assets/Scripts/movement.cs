@@ -97,14 +97,24 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
-        // Check if connection is established or if Delete key was pressed for manual override
-        if (gameManager.ConnectionSuccess() || Input.GetKeyDown(KeyCode.Delete))
+
+        // Check if GameManager exists
+        if (gameManager == null || Input.GetKeyDown(KeyCode.Delete))
         {
+            // No GameManager? Allow movement by default
             connectionEstablished = true;
-            Debug.Log("Connection Established (or manually overridden)");
+            Debug.Log("GameManager is null. Free play enabled.");
+        }
+        else
+        {
+            // GameManager exists? Wait for connection
+            if (gameManager.ConnectionSuccess())
+            {
+                connectionEstablished = true;
+                Debug.Log("Connection Established.");
+            }
         }
 
-        // Disable movement if connection isn't active and no manual override
         if (!connectionEstablished) return;
 
         ApplyGravity();
