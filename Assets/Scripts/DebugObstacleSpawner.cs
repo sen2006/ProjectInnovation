@@ -17,7 +17,7 @@ public class DebugObstacleSpawner : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.B))
         {
             Debug.Log("Spawning Barrier Wall (Test Mode)");
-            obstacleSpawner.SpawnBarrierWallServerRpc();
+            //obstacleSpawner.SpawnBarrierWallServerRpc();
         }
 
         if (Input.GetKeyDown(KeyCode.M))
