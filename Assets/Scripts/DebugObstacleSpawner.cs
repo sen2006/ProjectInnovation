@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class DebugObstacleSpawner : MonoBehaviour
 {
-    private NetworkedObstacleSpawner obstacleSpawner;
+    private DJAbilities obstacleSpawner;
 
     private void Start()
     {
-        obstacleSpawner = FindObjectOfType<NetworkedObstacleSpawner>();
+        obstacleSpawner = FindObjectOfType<DJAbilities>();
     }
 
     private void Update()
