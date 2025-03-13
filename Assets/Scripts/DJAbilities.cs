@@ -115,7 +115,7 @@ public class DJAbilities : NetworkBehaviour
 
     // ---- 
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server)]
     public void SpawnBarrierWallServerRpc()
     {
         if (!canSpawnBarrier) return;
@@ -128,7 +128,7 @@ public class DJAbilities : NetworkBehaviour
         StartCoroutine(ResetBarrierCooldown());
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server)]
     public void SpawnMovingBlockRpc()
     {
         if (!canSpawnMovingBlock) return;
