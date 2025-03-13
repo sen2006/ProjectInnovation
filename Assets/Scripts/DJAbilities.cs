@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Unity.Services.Core;
 using System.Collections;
 
-public class DJ : NetworkBehaviour
+public class DJAbilities : NetworkBehaviour
 {
     [Header("Buttons")]
     [SerializeField] private Button bassSlamButton;
