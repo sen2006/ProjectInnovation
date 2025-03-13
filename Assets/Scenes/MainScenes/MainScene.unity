@@ -2177,6 +2177,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1606938208940863865, guid: 7ead65a890faa0449b0918308e018de6, type: 3}
+      propertyPath: NetworkConfig.EnableSceneManagement
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2335124039339739896, guid: 7ead65a890faa0449b0918308e018de6, type: 3}
       propertyPath: ConnectionData.ServerListenAddress
       value: 0.0.0.0
@@ -2238,6 +2242,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 971749357090249125, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: Ownership
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 971749357090249125, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 1702168666
