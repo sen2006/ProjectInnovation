@@ -201,6 +201,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e6fdc7d777b5e248aed52edd2a99add, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &61710565 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2707944998316678340, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+  m_PrefabInstance: {fileID: 2031123538}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 61710559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ada82fe913c7da41b1b0254d7cd9c83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &76603431
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1184,6 +1195,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71888bd61040c454c9c3da6eb8858a71, type: 3}
+--- !u!114 &845938061 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1170294418798492703, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+  m_PrefabInstance: {fileID: 2031123538}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04bd650daf2528f4c8189e29d096f1d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &868079517
 GameObject:
   m_ObjectHideFlags: 0
@@ -2266,6 +2288,18 @@ PrefabInstance:
       propertyPath: networkManager
       value: 
       objectReference: {fileID: 1379524811}
+    - target: {fileID: 7246974792539275835, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 181901200}
+    - target: {fileID: 7246974792539275835, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: movement
+      value: 
+      objectReference: {fileID: 845938061}
+    - target: {fileID: 7246974792539275835, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: cameraEffects
+      value: 
+      objectReference: {fileID: 61710565}
     - target: {fileID: 7246974792539275835, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
       propertyPath: cameraManager
       value: 

@@ -23,6 +23,8 @@ public class GameManager : NetworkBehaviour
         Connected,
     }
 
+    bool mobileConnected=false;
+
     public PlayerType playerType { get; private set; }
     public ConnectionState connectionState { get; private set; }
     private ISession session;
@@ -69,6 +71,22 @@ public class GameManager : NetworkBehaviour
             case 2: playerType = PlayerType.Mobile; break;
         }
         Debug.Log("LocalClientType:" + GetLocalPlayerType());
+
+        if (playerType == PlayerType.Mobile)
+        {
+
+        }
+    }
+
+    [Rpc(SendTo.Server)]
+    private void mobileConnectedRpc()
+    {
+        mobileConnected = true;
+    }
+
+    public bool ConnectionSuccess()
+    {
+        return mobileConnected && connectionState == ConnectionState.Connected;
     }
 
     public PlayerType GetLocalPlayerType() { return playerType; }
