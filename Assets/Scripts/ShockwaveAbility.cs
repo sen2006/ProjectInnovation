@@ -9,6 +9,7 @@ public class ShockwaveAbility : MonoBehaviour
     public float shockwaveSpeed = 8.0f, shockwaveMaxRadius = 10.0f, heightMultiplier = 3.0f;
     public float shockwaveDuration = 0.5f, shockwaveFadeDuration = 1.0f;
     public Gradient shockwaveGradient;
+    private NativeArray<Color> shockwaveGradientColors;
 
     private List<GridManager> gridManagers = new List<GridManager>();
     private List<Shockwave> activeShockwaves = new List<Shockwave>();
@@ -24,6 +25,8 @@ public class ShockwaveAbility : MonoBehaviour
 
         int totalInstances = gridManagers.Count > 0 ? gridManagers[0].positions.Length : 0;
         affectedCubes = new NativeArray<bool>(totalInstances, Allocator.Persistent);
+
+        PrecomputeShockwaveGradient();
     }
 
     void Update()
@@ -38,6 +41,17 @@ public class ShockwaveAbility : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             activeShockwaves.Add(new Shockwave(hit.point, Time.time));
+        }
+    }
+
+    void PrecomputeShockwaveGradient()
+    {
+        int gradientResolution = 256;
+        shockwaveGradientColors = new NativeArray<Color>(gradientResolution, Allocator.Persistent);
+        for (int i = 0; i < gradientResolution; i++)
+        {
+            float t = i / (float)(gradientResolution - 1);
+            shockwaveGradientColors[i] = shockwaveGradient.Evaluate(t).linear;
         }
     }
 
@@ -102,8 +116,8 @@ public class ShockwaveAbility : MonoBehaviour
             colors = gridManager.colors,
             positions = gridManager.positions,
             scales = gridManager.scales,
-            gradientColors = gridManager.gradientColors,
-            gradientResolution = gridManager.gradientColors.Length,
+            gradientColors = shockwaveGradientColors,  // ✅ Use the shockwave gradient
+            gradientResolution = shockwaveGradientColors.Length,
             affectedCubes = affectedCubes
         };
 
@@ -177,11 +191,12 @@ public class ShockwaveAbility : MonoBehaviour
                 targetScaleY = heightMultiplier * (1f - fadeProgress);
                 affectedCubes[index] = true;
 
+                // ✅ Map the distance to the gradient colors
                 float gradientPos = math.saturate((distance - (radius - 2.5f)) / 2.5f);
                 int gradientIndex = (int)(gradientPos * (gradientResolution - 1));
                 gradientIndex = math.clamp(gradientIndex, 0, gradientResolution - 1);
 
-                colors[index] = gradientColors[gradientIndex];
+                colors[index] = gradientColors[gradientIndex];  // ✅ Apply the gradient color
             }
 
             float lerpSpeed = targetScaleY > currentScale.y ? animationSpeed : shrinkSpeed;
@@ -216,6 +231,7 @@ public class ShockwaveAbility : MonoBehaviour
 
     void OnDestroy()
     {
+        if (shockwaveGradientColors.IsCreated) shockwaveGradientColors.Dispose();
         if (affectedCubes.IsCreated) affectedCubes.Dispose();
     }
 }
