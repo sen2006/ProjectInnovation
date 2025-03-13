@@ -1900,7 +1900,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1541434283}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2427,7 +2427,9 @@ PrefabInstance:
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 408587974
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 28292354422831358, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+    - {fileID: 768009934522516877, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2933,6 +2935,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1170294418798492703, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+      propertyPath: gameManager
+      value: 
+      objectReference: {fileID: 2106548503}
+    - target: {fileID: 1170294418798492703, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
       propertyPath: strafeAirControl
       value: 8
       objectReference: {fileID: 0}
@@ -2975,6 +2981,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 61710561}
   m_SourcePrefab: {fileID: 100100000, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+--- !u!114 &2106548503 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6021293180825893531, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+  m_PrefabInstance: {fileID: 1541434282}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29e2744aded75f74ab7d623350bd0e12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &2108237819 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 793673708235111510, guid: 71888bd61040c454c9c3da6eb8858a71, type: 3}
@@ -3055,3 +3072,4 @@ SceneRoots:
   - {fileID: 579157182}
   - {fileID: 1014725740}
   - {fileID: 161744701}
+  - {fileID: 1280565029}
