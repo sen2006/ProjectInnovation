@@ -565,8 +565,8 @@ Transform:
   m_GameObject: {fileID: 203541263}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.9, z: 686.6833}
-  m_LocalScale: {x: 3, y: 1, z: 138.47002}
+  m_LocalPosition: {x: 0, y: -0.9, z: 682.4435}
+  m_LocalScale: {x: 3, y: 1, z: 139.3298}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1680516687}
@@ -851,6 +851,14 @@ PrefabInstance:
     - target: {fileID: 5070489804463123088, guid: 061ed2ea91d51eb46ad90b46d5ab1e00, type: 3}
       propertyPath: m_Center.y
       value: 0.30753624
+      objectReference: {fileID: 0}
+    - target: {fileID: 5714799398474560401, guid: 061ed2ea91d51eb46ad90b46d5ab1e00, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -13
+      objectReference: {fileID: 0}
+    - target: {fileID: 6662310321977581175, guid: 061ed2ea91d51eb46ad90b46d5ab1e00, type: 3}
+      propertyPath: height
+      value: 102
       objectReference: {fileID: 0}
     - target: {fileID: 8478793225763078473, guid: 061ed2ea91d51eb46ad90b46d5ab1e00, type: 3}
       propertyPath: m_Size.y
@@ -2443,6 +2451,10 @@ PrefabInstance:
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 408587974
       objectReference: {fileID: 0}
+    - target: {fileID: 4122331999481127327, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: gameManager
+      value: 
+      objectReference: {fileID: 1541434283}
     - target: {fileID: 6021293180825893531, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
       propertyPath: networkManager
       value: 
@@ -2999,7 +3011,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 398344970839597382, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5
+      value: -13
       objectReference: {fileID: 0}
     - target: {fileID: 398344970839597382, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3080,17 +3092,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 61710561}
   m_SourcePrefab: {fileID: 100100000, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
---- !u!114 &2106548503 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6021293180825893531, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
-  m_PrefabInstance: {fileID: 1541434282}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29e2744aded75f74ab7d623350bd0e12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &2108237819 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 793673708235111510, guid: 71888bd61040c454c9c3da6eb8858a71, type: 3}
