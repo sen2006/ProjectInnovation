@@ -356,4 +356,5 @@ MonoBehaviour:
   cooldownDuration: 5
   phaseableWallTag: PhaseableWall
   normalWallMaterial: {fileID: 2100000, guid: 8ea2d75bae0f7b9448d761b7c4b2c31a, type: 2}
-  glitchWallMaterial: {fileID: 2100000, guid: 9af908bbddb216e458b6cc0fe122b715, type: 2}
+  glitchWallMaterial: {fileID: 2100000, guid: 3441fa515de71f14a99a575d501c56f1, type: 2}
+  cooldownImage: {fileID: 0}

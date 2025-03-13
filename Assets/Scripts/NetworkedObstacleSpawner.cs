@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -12,15 +12,18 @@ public class NetworkedObstacleSpawner : NetworkBehaviour
     [SerializeField] private Transform player;  // The moving player reference
 
     [Header("Spawn Settings")]
-    [SerializeField] private float spawnDistanceAhead = 15f; // Distance ahead of player
-    [SerializeField] private float movingBlockOffsetX = 2f;  // Offset for moving block
-    [SerializeField] private float spawnHeight = 1f; // Adjust spawn height if needed
+    [SerializeField] private float spawnDistanceAhead = 15f;
+    [SerializeField] private float movingBlockOffsetX = 2f;
+    [SerializeField] private float spawnHeight = 1f;
 
     [Header("Distortion Effects")]
     [SerializeField] private CameraEffects cameraEffects;
+    [SerializeField] private float distortionCooldownDuration = 5f;
 
     private bool canSpawnBarrier = true;
     private bool canSpawnMovingBlock = true;
+    private bool canChangeAudioDistortion = true;
+    private bool canChangeCameraDistortion = true;
 
     [ServerRpc(RequireOwnership = false)]
     public void SpawnBarrierWallServerRpc()
@@ -41,7 +44,6 @@ public class NetworkedObstacleSpawner : NetworkBehaviour
         if (!canSpawnMovingBlock) return;
         canSpawnMovingBlock = false;
 
-        // Spawn slightly to the side so it's not centered
         Vector3 spawnPosition = new Vector3(player.position.x + movingBlockOffsetX, spawnHeight, player.position.z + spawnDistanceAhead);
         GameObject newBlock = Instantiate(movingBlockPrefab, spawnPosition, Quaternion.identity);
         newBlock.GetComponent<NetworkObject>().Spawn();
@@ -61,24 +63,47 @@ public class NetworkedObstacleSpawner : NetworkBehaviour
         canSpawnMovingBlock = true;
     }
 
+    // **🔹 Synchronize Power-up Effects**
     [ServerRpc(RequireOwnership = false)]
-    public void UpdateAudioDistortionServerRpc(float distortionValue)
+    public void PickupAudioDistortionPowerupServerRpc()
     {
-        UpdateAudioDistortionClientRpc(distortionValue);
+        UpdateAudioDistortionClientRpc(0f);
+        canChangeAudioDistortion = false;
+        StartCoroutine(AudioDistortionCooldown());
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void PickupCameraDistortionPowerupServerRpc()
+    {
+        UpdateCameraDistortionClientRpc(0f);
+        canChangeCameraDistortion = false;
+        StartCoroutine(CameraDistortionCooldown());
     }
 
     [ClientRpc]
     private void UpdateAudioDistortionClientRpc(float distortionValue)
     {
-        // Pseudo-code for audio distortion effect
-        Debug.Log($"Audio Distortion Updated: {distortionValue}");
+        Debug.Log($"Audio Distortion Reset: {distortionValue}");
         FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Distortion", distortionValue);
-        //TODO: turn distortion off after amount of time
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void UpdateCameraDistortionServerRpc(float distortionValue)
+    [ClientRpc]
+    private void UpdateCameraDistortionClientRpc(float distortionValue)
     {
         cameraEffects.ApplyDistortion(distortionValue);
+    }
+
+    private IEnumerator AudioDistortionCooldown()
+    {
+        yield return new WaitForSeconds(distortionCooldownDuration);
+        canChangeAudioDistortion = true;
+        Debug.Log("DJ can change Audio Distortion again.");
+    }
+
+    private IEnumerator CameraDistortionCooldown()
+    {
+        yield return new WaitForSeconds(distortionCooldownDuration);
+        canChangeCameraDistortion = true;
+        Debug.Log("DJ can change Camera Distortion again.");
     }
 }

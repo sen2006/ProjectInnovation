@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public class LocalObstacleSpawner : MonoBehaviour
@@ -15,6 +15,11 @@ public class LocalObstacleSpawner : MonoBehaviour
     [SerializeField] private float spawnDistanceAhead = 15f;
     [SerializeField] private float movingBlockOffsetX = 2f;
     [SerializeField] private float spawnHeight = 1f;
+
+    [Header("Distortion Cooldowns")]
+    [SerializeField] private float distortionCooldownDuration = 5f; // Cooldown before DJ can change
+    private bool canChangeAudioDistortion = true;
+    private bool canChangeCameraDistortion = true;
 
     private bool canSpawnBarrier = true;
     private bool canSpawnMovingBlock = true;
@@ -33,20 +38,19 @@ public class LocalObstacleSpawner : MonoBehaviour
             SpawnMovingBlock();
         }
 
-        // Simulating Audio & Camera Distortion Sliders
-        if (Input.GetKey(KeyCode.Alpha1))
+        // Simulated DJ Controls (Only work if cooldown has ended)
+        if (Input.GetKey(KeyCode.Alpha1) && canChangeAudioDistortion)
         {
-            float distortionValue = Mathf.PingPong(Time.time, 1f); // Simulated slider value
+            float distortionValue = Mathf.PingPong(Time.time, 1f);
             Debug.Log($"Simulated Audio Distortion: {distortionValue}");
             FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Distortion", distortionValue);
-            //TODO: turn distortion off after amount of time
         }
 
-        if (Input.GetKey(KeyCode.Alpha2))
+        if (Input.GetKey(KeyCode.Alpha2) && canChangeCameraDistortion)
         {
             float distortionValue = Mathf.PingPong(Time.time, 1f);
             Debug.Log($"Simulated Camera Distortion: {distortionValue}");
-            cameraEffects.ApplyDistortion(distortionValue); // This now enables the glitch shader
+            cameraEffects.ApplyDistortion(distortionValue);
         }
     }
 
@@ -80,5 +84,36 @@ public class LocalObstacleSpawner : MonoBehaviour
     {
         yield return new WaitForSeconds(6f);
         canSpawnMovingBlock = true;
+    }
+
+    // **🔹 New Power-up Handling**
+    public void PickupAudioDistortionPowerup()
+    {
+        Debug.Log("Picked Up Audio Distortion Powerup - Resetting Distortion & Starting Cooldown.");
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Distortion", 0f); // Reset audio distortion
+        canChangeAudioDistortion = false;
+        StartCoroutine(AudioDistortionCooldown());
+    }
+
+    public void PickupCameraDistortionPowerup()
+    {
+        Debug.Log("Picked Up Camera Distortion Powerup - Resetting Distortion & Starting Cooldown.");
+        cameraEffects.ApplyDistortion(0f); // Reset camera distortion
+        canChangeCameraDistortion = false;
+        StartCoroutine(CameraDistortionCooldown());
+    }
+
+    private IEnumerator AudioDistortionCooldown()
+    {
+        yield return new WaitForSeconds(distortionCooldownDuration);
+        canChangeAudioDistortion = true;
+        Debug.Log("DJ can change Audio Distortion again.");
+    }
+
+    private IEnumerator CameraDistortionCooldown()
+    {
+        yield return new WaitForSeconds(distortionCooldownDuration);
+        canChangeCameraDistortion = true;
+        Debug.Log("DJ can change Camera Distortion again.");
     }
 }

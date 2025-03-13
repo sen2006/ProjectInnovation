@@ -492,6 +492,7 @@ MonoBehaviour:
   movingBlockOffsetX: 2
   spawnHeight: 5
   cameraEffects: {fileID: 1457838716}
+  distortionCooldownDuration: 5
 --- !u!4 &557256404
 Transform:
   m_ObjectHideFlags: 0
@@ -526,6 +527,7 @@ MonoBehaviour:
   spawnDistanceAhead: 30
   movingBlockOffsetX: 2
   spawnHeight: 5
+  distortionCooldownDuration: 5
 --- !u!1001 &594104552
 PrefabInstance:
   m_ObjectHideFlags: 0
