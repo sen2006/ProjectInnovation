@@ -7,13 +7,13 @@ using System.Collections.Generic;
 public class ShockwaveAbility : MonoBehaviour
 {
     public float shockwaveSpeed = 8.0f, shockwaveMaxRadius = 10.0f, heightMultiplier = 3.0f;
-    public float shockwaveDuration = 0.5f;
+    public float shockwaveDuration = 0.5f, shockwaveFadeDuration = 1.0f;
     public Gradient shockwaveGradient;
+    private NativeArray<Color> shockwaveGradientColors;
 
     private List<GridManager> gridManagers = new List<GridManager>();
     private List<Shockwave> activeShockwaves = new List<Shockwave>();
-    private NativeArray<bool> affectedCubes; // Track affected cubes
-    private NativeList<int> affectedIndices; // Track affected cube indices
+    private NativeArray<bool> affectedCubes;
 
     void Start()
     {
@@ -25,7 +25,8 @@ public class ShockwaveAbility : MonoBehaviour
 
         int totalInstances = gridManagers.Count > 0 ? gridManagers[0].positions.Length : 0;
         affectedCubes = new NativeArray<bool>(totalInstances, Allocator.Persistent);
-        affectedIndices = new NativeList<int>(Allocator.Persistent);
+
+        PrecomputeShockwaveGradient();
     }
 
     void Update()
@@ -43,6 +44,17 @@ public class ShockwaveAbility : MonoBehaviour
         }
     }
 
+    void PrecomputeShockwaveGradient()
+    {
+        int gradientResolution = 256;
+        shockwaveGradientColors = new NativeArray<Color>(gradientResolution, Allocator.Persistent);
+        for (int i = 0; i < gradientResolution; i++)
+        {
+            float t = i / (float)(gradientResolution - 1);
+            shockwaveGradientColors[i] = shockwaveGradient.Evaluate(t).linear;
+        }
+    }
+
     public void AddShockwave(Vector3 origin)
     {
         activeShockwaves.Add(new Shockwave(origin, Time.time));
@@ -57,59 +69,60 @@ public class ShockwaveAbility : MonoBehaviour
             Shockwave wave = activeShockwaves[i];
             float elapsedTime = currentTime - wave.startTime;
             float radius = elapsedTime * shockwaveSpeed;
+            float fadeProgress = 0f;
 
             if (radius > shockwaveMaxRadius)
             {
-                activeShockwaves.RemoveAt(i);
-                continue;
+                if (!wave.isFading)
+                {
+                    wave.isFading = true;
+                    wave.fadeStartTime = currentTime;
+                }
+
+                float fadeElapsed = currentTime - wave.fadeStartTime;
+                fadeProgress = math.saturate(fadeElapsed / shockwaveFadeDuration);
+
+                if (fadeProgress >= 1f)
+                {
+                    activeShockwaves.RemoveAt(i);
+                    continue;
+                }
             }
 
             foreach (GridManager gridManager in gridManagers)
             {
-                ApplyShockwaveEffect(gridManager, wave, radius);
+                ApplyShockwaveEffect(gridManager, wave.origin, radius, fadeProgress);
             }
         }
 
-        // Ensure all previously affected cubes continue shrinking
         foreach (GridManager gridManager in gridManagers)
         {
             ApplyShrinkEffect(gridManager);
         }
     }
 
-    void ApplyShockwaveEffect(GridManager gridManager, Shockwave wave, float radius)
+    void ApplyShockwaveEffect(GridManager gridManager, Vector3 waveOrigin, float radius, float fadeProgress)
     {
         if (!gridManager.positions.IsCreated || !gridManager.colors.IsCreated || !gridManager.scales.IsCreated) return;
 
-        affectedIndices.Clear(); // Reset affected indices list before tracking
-
-        // Step 1: Apply Shockwave Job (does NOT modify affectedIndices)
         ApplyShockwaveJob shockwaveJob = new ApplyShockwaveJob
         {
-            waveOrigin = wave.origin,
+            waveOrigin = waveOrigin,
             radius = radius,
             heightMultiplier = heightMultiplier,
             animationSpeed = 0.1f,
             shrinkSpeed = 0.05f,
+            fadeProgress = fadeProgress,
             colors = gridManager.colors,
             positions = gridManager.positions,
             scales = gridManager.scales,
-            gradientColors = gridManager.gradientColors,
-            gradientResolution = gridManager.gradientColors.Length,
+            gradientColors = shockwaveGradientColors,  // ✅ Use the shockwave gradient
+            gradientResolution = shockwaveGradientColors.Length,
             affectedCubes = affectedCubes
         };
 
-        JobHandle shockwaveHandle = shockwaveJob.Schedule(gridManager.positions.Length, 64);
-
-        // Step 2: Track affected cubes after the shockwave effect
-        TrackAffectedCubesJob trackJob = new TrackAffectedCubesJob
-        {
-            affectedCubes = affectedCubes,
-            affectedIndices = affectedIndices
-        };
-
-        JobHandle trackHandle = trackJob.Schedule(shockwaveHandle);
-        trackHandle.Complete();
+        JobHandle jobHandle = shockwaveJob.Schedule(gridManager.positions.Length, 64);
+        jobHandle.Complete();
 
         gridManager.ApplyRendering();
     }
@@ -122,12 +135,10 @@ public class ShockwaveAbility : MonoBehaviour
         {
             scales = gridManager.scales,
             shrinkSpeed = 0.02f,
-            affectedCubes = affectedCubes,
-            affectedIndices = affectedIndices
+            affectedCubes = affectedCubes
         };
 
-        JobHandle jobHandle = shrinkJob.Schedule();
-        jobHandle.Complete();
+        JobHandle jobHandle = shrinkJob.Schedule(gridManager.positions.Length, 64);
         jobHandle.Complete();
 
         gridManager.ApplyRendering();
@@ -137,7 +148,16 @@ public class ShockwaveAbility : MonoBehaviour
     {
         public Vector3 origin;
         public float startTime;
-        public Shockwave(Vector3 origin, float startTime) { this.origin = origin; this.startTime = startTime; }
+        public float fadeStartTime;
+        public bool isFading;
+
+        public Shockwave(Vector3 origin, float startTime)
+        {
+            this.origin = origin;
+            this.startTime = startTime;
+            this.fadeStartTime = 0f;
+            this.isFading = false;
+        }
     }
 
     struct ApplyShockwaveJob : IJobParallelFor
@@ -147,13 +167,14 @@ public class ShockwaveAbility : MonoBehaviour
         public float heightMultiplier;
         public float animationSpeed;
         public float shrinkSpeed;
+        public float fadeProgress;
         public int gradientResolution;
 
         [ReadOnly] public NativeArray<float3> positions;
         public NativeArray<float3> scales;
         public NativeArray<Color> colors;
         [ReadOnly] public NativeArray<Color> gradientColors;
-        public NativeArray<bool> affectedCubes; // ✅ Track affected cubes
+        public NativeArray<bool> affectedCubes;
 
         public void Execute(int index)
         {
@@ -165,16 +186,17 @@ public class ShockwaveAbility : MonoBehaviour
             float3 currentScale = scales[index];
             float targetScaleY = 1f;
 
-            if (distance * distance < radiusSqr)
+            if (distance * distance < radiusSqr && distance * distance > innerRadiusSqr)
             {
-                targetScaleY = heightMultiplier;
-                affectedCubes[index] = true; // ✅ Ensure cube is affected
-            }
+                targetScaleY = heightMultiplier * (1f - fadeProgress);
+                affectedCubes[index] = true;
 
-            // ✅ If in the outer edge, mark it affected for shrinking
-            if (distance * distance >= innerRadiusSqr && distance * distance <= radiusSqr)
-            {
-                affectedCubes[index] = true; // Ensure outer ring is also affected
+                // ✅ Map the distance to the gradient colors
+                float gradientPos = math.saturate((distance - (radius - 2.5f)) / 2.5f);
+                int gradientIndex = (int)(gradientPos * (gradientResolution - 1));
+                gradientIndex = math.clamp(gradientIndex, 0, gradientResolution - 1);
+
+                colors[index] = gradientColors[gradientIndex];  // ✅ Apply the gradient color
             }
 
             float lerpSpeed = targetScaleY > currentScale.y ? animationSpeed : shrinkSpeed;
@@ -184,60 +206,37 @@ public class ShockwaveAbility : MonoBehaviour
         }
     }
 
-
-    struct TrackAffectedCubesJob : IJob
-    {
-        [ReadOnly] public NativeArray<bool> affectedCubes;
-        public NativeList<int> affectedIndices;
-
-        public void Execute()
-        {
-            affectedIndices.Clear();
-            for (int i = 0; i < affectedCubes.Length; i++)
-            {
-                if (affectedCubes[i])
-                {
-                    affectedIndices.Add(i);
-                }
-            }
-        }
-    }
-
-    struct ApplyShrinkJob : IJob
+    struct ApplyShrinkJob : IJobParallelFor
     {
         public NativeArray<float3> scales;
         public float shrinkSpeed;
         public NativeArray<bool> affectedCubes;
-        [ReadOnly] public NativeList<int> affectedIndices;
 
-        public void Execute()
+        public void Execute(int index)
         {
-            for (int i = 0; i < affectedIndices.Length; i++)
+            if (!affectedCubes[index]) return;
+
+            float3 currentScale = scales[index];
+            float newScaleY = math.lerp(currentScale.y, 1f, shrinkSpeed);
+
+            if (math.abs(newScaleY - 1f) < 0.01f)
             {
-                int cubeIndex = affectedIndices[i];
-
-                float3 currentScale = scales[cubeIndex];
-                float newScaleY = math.lerp(currentScale.y, 1f, shrinkSpeed);
-
-                // ✅ Ensure it fully resets to 1.0 and marks as unaffected
-                if (math.abs(newScaleY - 1f) < 0.01f)
-                {
-                    newScaleY = 1f;
-                    affectedCubes[cubeIndex] = false; // ✅ Reset state
-                }
-
-                scales[cubeIndex] = new float3(currentScale.x, newScaleY, currentScale.z);
+                newScaleY = 1f;
+                affectedCubes[index] = false;
             }
+
+            scales[index] = new float3(currentScale.x, newScaleY, currentScale.z);
         }
     }
 
-
     void OnDestroy()
     {
+        if (shockwaveGradientColors.IsCreated) shockwaveGradientColors.Dispose();
         if (affectedCubes.IsCreated) affectedCubes.Dispose();
-        if (affectedIndices.IsCreated) affectedIndices.Dispose();
     }
 }
+
+
 
 
 
