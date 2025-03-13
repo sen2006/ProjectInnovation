@@ -429,6 +429,11 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
+--- !u!1 &644016022 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9191532357592237585, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+  m_PrefabInstance: {fileID: 1598761915}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &653260035
 GameObject:
   m_ObjectHideFlags: 0
@@ -1387,6 +1392,8 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 8
     m_NumAlphaKeys: 2
+  capsulePrefab: {fileID: 5330993877907605342, guid: 540bdf3546f6ed249bd77e749ea7e08c, type: 3}
+  player: {fileID: 644016022}
 --- !u!4 &1865862835 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 398344970839597382, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
