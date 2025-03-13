@@ -356,6 +356,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 971749357090249125, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1702168666
+      objectReference: {fileID: 0}
     - target: {fileID: 1749458643981799268, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
       propertyPath: m_Name
       value: Managers And UI
@@ -372,6 +376,10 @@ PrefabInstance:
       propertyPath: networkManager
       value: 
       objectReference: {fileID: 1379524811}
+    - target: {fileID: 6021293180825893531, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
+      propertyPath: overridePlayerType
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8201505299463175140, guid: 6971531b30d75e844bb9c1099c5bd836, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
