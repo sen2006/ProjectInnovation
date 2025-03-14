@@ -48,6 +48,11 @@ public class PlayerDeath : MonoBehaviour
 
         if (!connectionEstablished) return;
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            deathScreen.SetActive(true);
+        }
+
         if (!deathEnabled)
         {
             elapsedTime += Time.deltaTime;
