@@ -3029,6 +3029,10 @@ PrefabInstance:
       propertyPath: deathScreen
       value: 
       objectReference: {fileID: 136655853}
+    - target: {fileID: 4543902028951897006, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
+      propertyPath: gameManager
+      value: 
+      objectReference: {fileID: 1541434283}
     - target: {fileID: 5324179419526296854, guid: d066b5e0146d32b45ada4b3a0c2baf5c, type: 3}
       propertyPath: phaseOverlay
       value: 

@@ -74,7 +74,7 @@ public class GameManager : NetworkBehaviour
 
         if (playerType == PlayerType.Mobile)
         {
-
+            mobileConnectedRpc();
         }
     }
 
@@ -82,6 +82,7 @@ public class GameManager : NetworkBehaviour
     private void mobileConnectedRpc()
     {
         mobileConnected = true;
+        Debug.Log("MobileDeviceConnected");
     }
 
     public bool ConnectionSuccess()
