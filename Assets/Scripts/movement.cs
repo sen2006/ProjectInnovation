@@ -60,6 +60,7 @@ public class Movement : MonoBehaviour
     [Header("References")]
     [SerializeField] Transform cameraTransform;
     [SerializeField] GameManager gameManager;
+    public bool IsSliding { get; private set; } = false;
 
     // Internal State
     private float colliderHeight;
@@ -281,6 +282,7 @@ public class Movement : MonoBehaviour
     {
         if (shouldSlide && isGrounded)
         {
+            IsSliding = true;
             col.height = colliderHeight * slideMult;
             col.center = new Vector3(0, -col.height / 2, 0);
             cameraTransform.GetComponent<CameraEffects>().ApplySlideEffect(0.7f, true); // Move down & tilt BACKWARD
@@ -289,14 +291,12 @@ public class Movement : MonoBehaviour
         }
         else
         {
+            IsSliding = false;
             col.height = colliderHeight;
             col.center = Vector3.zero;
             cameraTransform.GetComponent<CameraEffects>().ApplySlideEffect(0f, false); // Reset camera position & tilt
         }
     }
-
-
-
 
     private bool IsGrounded()
     {

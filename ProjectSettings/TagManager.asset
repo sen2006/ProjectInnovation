@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ground
   - PhaseableWall
+  - PhaseableWallSpawn
   layers:
   - Default
   - TransparentFX

@@ -7,7 +7,7 @@ public class PhaseAbility : MonoBehaviour
     [Header("Phase Ability Settings")]
     [SerializeField] private float phaseDuration = 2f;
     [SerializeField] private float cooldownDuration = 5f;
-    [SerializeField] private string phaseableWallTag = "PhaseableWall";
+    [SerializeField] private string phaseableWallTag = "PhaseableWallSpawn";
 
     [Header("Materials")]
     [SerializeField] private Material normalWallMaterial;

@@ -4,40 +4,41 @@ using UnityEngine.SceneManagement;
 public class PlayerDeath : MonoBehaviour
 {
     [Header("Death Settings")]
-    [SerializeField] private string deathTag = "PhaseableWall"; // What kills the player
+    [SerializeField] private string[] deathTags = { "PhaseableWall", "PhaseableWallSpawn" }; // Multiple tags
     [SerializeField] private float deathYThreshold = -10f; // Y-level for falling off
     [SerializeField] private float minVelocityThreshold = 0.1f; // Min velocity before dying
     [SerializeField] private float gracePeriod = 3f; // Time before player can die
 
     [Header("UI Elements")]
     [SerializeField] private GameObject deathScreen; // Assign in the Inspector
+    [SerializeField] private Transform spawnPoint; // Assign this in the Inspector
 
     [SerializeField] GameManager gameManager;
 
+    private float elapsedTime = 0f;
     private bool isDead = false;
     private Rigidbody rb;
     private bool canDie = false; // Prevent death before grace period ends
+    private bool deathEnabled = false;
+    private bool connectionEstablished = false;
 
-    private bool connectionEstablished = false; // Track if connected or override active
+    private Movement movementScript; // Reference to movement script
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        Invoke(nameof(EnableDeath), gracePeriod); // Enable death after grace period
+        movementScript = GetComponent<Movement>(); // Get movement script
     }
 
     private void Update()
     {
-        // Check if GameManager exists
         if (gameManager == null || Input.GetKeyDown(KeyCode.Delete))
         {
-            // No GameManager? Allow movement by default
             connectionEstablished = true;
             Debug.Log("GameManager is null. Free play enabled.");
         }
         else
         {
-            // GameManager exists? Wait for connection
             if (gameManager.ConnectionSuccess())
             {
                 connectionEstablished = true;
@@ -47,13 +48,26 @@ public class PlayerDeath : MonoBehaviour
 
         if (!connectionEstablished) return;
 
-        // Check if player falls below the threshold (only after grace period)
+        if (!deathEnabled)
+        {
+            elapsedTime += Time.deltaTime;
+            if (elapsedTime >= gracePeriod)
+            {
+                EnableDeath();
+                deathEnabled = true;
+            }
+        }
+
+        if (movementScript != null && movementScript.IsSliding)
+        {
+            return; // Player is safe while sliding
+        }
+
         if (canDie && transform.position.y < deathYThreshold && !isDead)
         {
             Die();
         }
 
-        // Check if player stops moving (only after grace period)
         if (canDie && rb.linearVelocity.magnitude < minVelocityThreshold && !isDead)
         {
             Debug.Log("Player velocity too low! Died.");
@@ -63,11 +77,25 @@ public class PlayerDeath : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Check for a normal collision with the wall (only after grace period)
-        if (canDie && collision.gameObject.CompareTag(deathTag) && !isDead)
+        if (movementScript != null && movementScript.IsSliding)
+        {
+            return; // Player is safe while sliding
+        }
+
+        if (canDie && IsDeathTag(collision.gameObject.tag) && !isDead)
         {
             Die();
         }
+    }
+
+    private bool IsDeathTag(string tag)
+    {
+        foreach (string deathTag in deathTags)
+        {
+            if (tag == deathTag)
+                return true;
+        }
+        return false;
     }
 
     private void EnableDeath()
@@ -88,8 +116,30 @@ public class PlayerDeath : MonoBehaviour
 
     public void RestartGame()
     {
+        if (spawnPoint == null)
+        {
+            Debug.LogError("Spawn Point is not set! Assign a spawn point in the Inspector.");
+            return;
+        }
+
+        // Reset player position
+        transform.position = spawnPoint.position;
+        rb.linearVelocity = Vector3.zero; // Reset velocity
+        isDead = false;
+        canDie = false; // Give the player a brief grace period after respawn
+
+        // Hide death screen
+        deathScreen.SetActive(false);
+        FindObjectOfType<MusicManager>().ResetMusicManager();
+
+        // Resume time
         Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        // Start grace period again
+        elapsedTime = 0f;
+        deathEnabled = false;
+
+        Debug.Log("Player Respawned!");
     }
 
     public void ReturnToMainMenu()

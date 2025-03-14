@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1125912061036582948}
   m_Layer: 0
   m_Name: Wall
-  m_TagString: PhaseableWall
+  m_TagString: PhaseableWallSpawn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

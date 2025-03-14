@@ -146,4 +146,19 @@ public class MusicManager : MonoBehaviour
         musicPlayEvent.release();
         timelineHandle.Free();
     }
+
+    public void ResetMusicManager()
+    {
+        connectionEstablished = false;
+        musicStarted = false;
+
+        // Reset timeline info
+        timelineInfo = new TimelineInfo();
+
+        // Stop and restart FMOD event
+        musicPlayEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        musicPlayEvent.start();
+
+        Debug.Log("MusicManager has been reset!");
+    }
 }
